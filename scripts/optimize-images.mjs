@@ -23,10 +23,12 @@ const outputRoot = path.join(root, 'src', 'assets', 'optimized');
 const manifestPath = path.join(outputRoot, 'manifest.json');
 
 const SETTINGS = {
-  version: 1,
+  version: 2,
   maxEdge: 1600,
   webpQuality: 78,
+  webpAlphaQuality: 100,
   avifQuality: 50,
+  avifAlphaQuality: 80,
 };
 
 const SOURCE_EXT = new Set(['.jpg', '.jpeg', '.png']);
@@ -122,16 +124,18 @@ function serializeManifest(manifest) {
 
 async function convert(sourceFile, key) {
   const { default: sharp } = await import('sharp');
-  const input = await fs.readFile(sourceFile);
-  const resized = await sharp(input, { failOn: 'none' })
-    .rotate()
-    .resize({
-      width: SETTINGS.maxEdge,
-      height: SETTINGS.maxEdge,
-      fit: 'inside',
-      withoutEnlargement: true,
-    })
-    .toBuffer({ resolveWithObject: true });
+  // PNG/WebP/AVIF keep their alpha. Do not flatten onto a background color:
+  // character art is meant to be a cutout (transparent around the figure).
+  const sourceMeta = await sharp(sourceFile, { failOn: 'none' }).metadata();
+  const hasAlpha = sourceMeta.hasAlpha === true;
+  let pipeline = sharp(sourceFile, { failOn: 'none' }).rotate().resize({
+    width: SETTINGS.maxEdge,
+    height: SETTINGS.maxEdge,
+    fit: 'inside',
+    withoutEnlargement: true,
+  });
+  if (hasAlpha) pipeline = pipeline.ensureAlpha();
+  const resized = await pipeline.png().toBuffer({ resolveWithObject: true });
 
   const webpRel = `${key}.webp`;
   const avifRel = `${key}.avif`;
@@ -139,12 +143,26 @@ async function convert(sourceFile, key) {
   const avifPath = path.join(outputRoot, ...avifRel.split('/'));
   await fs.mkdir(path.dirname(webpPath), { recursive: true });
 
-  await sharp(resized.data).webp({ quality: SETTINGS.webpQuality, effort: 4 }).toFile(webpPath);
-  await sharp(resized.data).avif({ quality: SETTINGS.avifQuality, effort: 4 }).toFile(avifPath);
+  await sharp(resized.data)
+    .webp({
+      quality: SETTINGS.webpQuality,
+      alphaQuality: SETTINGS.webpAlphaQuality,
+      effort: 4,
+      smartSubsample: false,
+    })
+    .toFile(webpPath);
+  await sharp(resized.data)
+    .avif({
+      quality: hasAlpha ? Math.max(SETTINGS.avifQuality, 55) : SETTINGS.avifQuality,
+      effort: 4,
+      chromaSubsampling: hasAlpha ? '4:4:4' : '4:2:0',
+    })
+    .toFile(avifPath);
 
   return {
     sourceSha256: await sha256(sourceFile),
     settingsVersion: SETTINGS.version,
+    hasAlpha,
     webp: webpRel,
     avif: avifRel,
     width: resized.info.width,

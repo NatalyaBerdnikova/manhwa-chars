@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import CatalogImage from '../components/CatalogImage.astro';
+import CastSlider from '../components/CastSlider.astro';
 import CharacterCard from '../components/CharacterCard.astro';
 import BiText from '../components/BiText.astro';
 import UiText from '../components/UiText.astro';
@@ -67,18 +68,32 @@ const social = await socialImage(work.data.cover);
     },
   ]}
 >
-  <article class="wrap page">
-    <Breadcrumbs crumbs={crumbs} />
-    {fellBack && <p class="fallback" data-i18n="en" role="note">{t('en', 'fallback.notice')}</p>}
-    <section class="banner">
-      <div class="banner-media">
-        <CatalogImage src={work.data.cover} alt={altRu} sizes="(min-width: 800px) 440px, 100vw" priority />
-      </div>
-      <div class="banner-copy">
-        <h1><BiText ru={title.text} en={titleEn.text} /></h1>
-        {work.data.originalTitle && work.data.originalTitle !== title.text && (
+  <article>
+    <div class="wrap page work-top">
+      <Breadcrumbs crumbs={crumbs} />
+      {fellBack && <p class="fallback" data-i18n="en" role="note">{t('en', 'fallback.notice')}</p>}
+      <h1 class="work-title"><BiText ru={title.text} en={titleEn.text} /></h1>
+      {work.data.originalTitle &&
+        work.data.originalTitle !== title.text &&
+        work.data.originalTitle !== titleEn.text && (
           <p class="fine">{work.data.originalTitle}</p>
         )}
+    </div>
+    {
+      cast.length > 0 ? (
+        <CastSlider characters={cast} titleRu={title.text} titleEn={titleEn.text} />
+      ) : (
+        <div class="wrap">
+          <section class="banner">
+            <div class="banner-media">
+              <CatalogImage src={work.data.cover} alt={altRu} sizes="(min-width: 800px) 440px, 100vw" priority />
+            </div>
+          </section>
+        </div>
+      )
+    }
+    <div class="wrap">
+      <section class="work-copy">
         <p data-i18n="ru">{description.text}</p>
         <p data-i18n="en">{descriptionEn.text}</p>
         <div class="facts">
@@ -99,30 +114,30 @@ const social = await socialImage(work.data.cover);
         </div>
         {bodyRu.html && <div class="prose" data-i18n="ru" set:html={bodyRu.html} />}
         {bodyEn.html && <div class="prose" data-i18n="en" set:html={bodyEn.html} />}
-      </div>
-    </section>
-    <section class="section">
-      <div class="section-head">
-        <div>
-          <h2><UiText k="work.characters" /></h2>
-          <p>
-            <span data-i18n="ru">{plural('ru', 'counts.characters', cast.length)}</span><span data-i18n="en">{plural('en', 'counts.characters', cast.length)}</span>
-          </p>
+      </section>
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <h2><UiText k="work.characters" /></h2>
+            <p>
+              <span data-i18n="ru">{plural('ru', 'counts.characters', cast.length)}</span><span data-i18n="en">{plural('en', 'counts.characters', cast.length)}</span>
+            </p>
+          </div>
         </div>
-      </div>
-      {
-        cast.length === 0 ? (
-          <p class="empty"><UiText k="work.empty" /></p>
-        ) : (
-          <ul class="grid">
-            {cast.map((character) => (
-              <li>
-                <CharacterCard character={character} work={work} level="h3" />
-              </li>
-            ))}
-          </ul>
-        )
-      }
-    </section>
+        {
+          cast.length === 0 ? (
+            <p class="empty"><UiText k="work.empty" /></p>
+          ) : (
+            <ul class="grid">
+              {cast.map((character) => (
+                <li>
+                  <CharacterCard character={character} work={work} level="h3" detail="tags" />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </section>
+    </div>
   </article>
 </BaseLayout>

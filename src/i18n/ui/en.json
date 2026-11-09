@@ -17,7 +17,9 @@
     "characters": "Characters",
     "works": "Works",
     "tags": "Tags",
-    "submit": "Suggest"
+    "submit": "Suggest",
+    "menu": "Menu",
+    "close": "Close"
   },
   "lang": {
     "switcher": "Language",
@@ -76,7 +78,10 @@
     "count": "Characters in this work: {n}."
   },
   "character": {
-    "portraitAlt": "Portrait of {name}, placeholder illustration",
+    "portraitAlt": "Full-length figure of {name}, placeholder illustration",
+    "explore": "Explore the collection →",
+    "scroll": "Scroll to discover",
+    "piece": "{name} / {index}",
     "coverAlt": "Cover of {title}, placeholder illustration",
     "tags": "Tags",
     "about": "About",
@@ -114,7 +119,17 @@
   "search": {
     "label": "Search",
     "placeholder": "Character name or series",
-    "submit": "Search"
+    "submit": "Search",
+    "open": "Open search",
+    "close": "Close search"
+  },
+  "slider": {
+    "label": "Characters in {title}",
+    "prev": "Previous character",
+    "next": "Next character",
+    "pause": "Pause slideshow",
+    "play": "Play slideshow",
+    "status": "{name}, {index} of {total}"
   },
   "sort": {
     "label": "Sort",

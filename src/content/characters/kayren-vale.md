@@ -4,6 +4,7 @@ name:
   en: "Kayren Vale"
 work: "silver-oath"
 image: "../../assets/optimized/characters/kayren-vale.webp"
+hoverImage: "../../assets/optimized/characters/kayren-vale-alt.webp"
 featured: true
 added: "2026-09-02"
 tags:

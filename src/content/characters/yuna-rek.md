@@ -4,6 +4,7 @@ name:
   en: "Yuna Rek"
 work: "silver-oath"
 image: "../../assets/optimized/characters/yuna-rek.webp"
+hoverImage: "../../assets/optimized/characters/yuna-rek-alt.webp"
 added: "2026-11-01"
 tags:
   hair: "brown"

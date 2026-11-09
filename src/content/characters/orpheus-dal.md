@@ -4,6 +4,7 @@ name:
   en: "Orpheus Dal"
 work: "ash-throne"
 image: "../../assets/optimized/characters/orpheus-dal.webp"
+imageAlt: "../../assets/optimized/characters/orpheus-dal-alt.webp"
 added: "2026-03-09"
 tags:
   hair: "black"

@@ -4,6 +4,7 @@ name:
   en: "Ren Sho"
 work: "ash-throne"
 image: "../../assets/optimized/characters/ren-sho.webp"
+hoverImage: "../../assets/optimized/characters/ren-sho-alt.webp"
 added: "2026-05-18"
 tags:
   hair: "black"

@@ -4,6 +4,7 @@ name:
   en: "Nox"
 work: "midnight-garden"
 image: "../../assets/optimized/characters/nox.webp"
+hoverImage: "../../assets/optimized/characters/nox-alt.webp"
 added: "2026-08-20"
 tags:
   hair: "white"

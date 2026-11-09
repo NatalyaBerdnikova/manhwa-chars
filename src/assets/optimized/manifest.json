@@ -1,79 +1,162 @@
 {
-  "version": 1,
+  "version": 2,
   "settings": {
-    "version": 1,
+    "version": 2,
     "maxEdge": 1600,
     "webpQuality": 78,
-    "avifQuality": 50
+    "webpAlphaQuality": 100,
+    "avifQuality": 50,
+    "avifAlphaQuality": 80
   },
   "files": {
     "characters/kayren-vale": {
-      "sourceSha256": "bf1fbda11bf31104e5a30d8937a696c25e0ef376549fd4660c7fd8137cbe5a44",
-      "settingsVersion": 1,
+      "sourceSha256": "560a6b46ef14a84ca92c6e66f10af413c9e1e2aa040018db7ceb925b06a0888c",
+      "settingsVersion": 2,
+      "hasAlpha": true,
       "webp": "characters/kayren-vale.webp",
       "avif": "characters/kayren-vale.avif",
-      "width": 900,
-      "height": 1200
+      "width": 720,
+      "height": 1280
+    },
+    "characters/kayren-vale-alt": {
+      "sourceSha256": "488e4ca84d95b49822c2eb41e0c559a61bdfdc8373357218a6cc89c353a4c7f8",
+      "settingsVersion": 2,
+      "hasAlpha": true,
+      "webp": "characters/kayren-vale-alt.webp",
+      "avif": "characters/kayren-vale-alt.avif",
+      "width": 720,
+      "height": 1280
     },
     "characters/lien-sol": {
-      "sourceSha256": "8cd493aa9b0b03668158383e9bd0866881fb5045887f6241b25684e3740a6847",
-      "settingsVersion": 1,
+      "sourceSha256": "02a2bdf46f7b2e2eeb418345608c236c906cba9d4566e6d1675e57748860d3d7",
+      "settingsVersion": 2,
+      "hasAlpha": true,
       "webp": "characters/lien-sol.webp",
       "avif": "characters/lien-sol.avif",
-      "width": 900,
-      "height": 1200
+      "width": 720,
+      "height": 1280
+    },
+    "characters/lien-sol-alt": {
+      "sourceSha256": "835d4c3df39e50e767b4890bf33d0937d5383ff64bbce8652e77dc9622cc19e4",
+      "settingsVersion": 2,
+      "hasAlpha": true,
+      "webp": "characters/lien-sol-alt.webp",
+      "avif": "characters/lien-sol-alt.avif",
+      "width": 720,
+      "height": 1280
     },
     "characters/mira-han": {
-      "sourceSha256": "6af57fad564ea39dc681db5d2b0681261d7279b2b448fbabc801829b610c3ad8",
-      "settingsVersion": 1,
+      "sourceSha256": "716563f2dc0bcb95a622a11a734a7b68fdd154fd3f232c4128e50d79308b9a86",
+      "settingsVersion": 2,
+      "hasAlpha": true,
       "webp": "characters/mira-han.webp",
       "avif": "characters/mira-han.avif",
-      "width": 900,
-      "height": 1200
+      "width": 720,
+      "height": 1280
+    },
+    "characters/mira-han-alt": {
+      "sourceSha256": "9e218c3e76a8b3d6ce2d73dea464575138365446cddbd69d4e5fc36c9227939f",
+      "settingsVersion": 2,
+      "hasAlpha": true,
+      "webp": "characters/mira-han-alt.webp",
+      "avif": "characters/mira-han-alt.avif",
+      "width": 720,
+      "height": 1280
     },
     "characters/nox": {
-      "sourceSha256": "804170d29e10b46af84495c12e6d2a42e37e87b709a345f534fecb90a2a07863",
-      "settingsVersion": 1,
+      "sourceSha256": "dbe89df4642c050bc8a9ad8ff66e1874934b93dc38300665e2253352be6978d1",
+      "settingsVersion": 2,
+      "hasAlpha": true,
       "webp": "characters/nox.webp",
       "avif": "characters/nox.avif",
-      "width": 900,
-      "height": 1200
+      "width": 720,
+      "height": 1280
+    },
+    "characters/nox-alt": {
+      "sourceSha256": "f2cdd33a77f59e1e5dd757458362fb880231bd82d04e26dd940daa8798665757",
+      "settingsVersion": 2,
+      "hasAlpha": true,
+      "webp": "characters/nox-alt.webp",
+      "avif": "characters/nox-alt.avif",
+      "width": 720,
+      "height": 1280
     },
     "characters/orpheus-dal": {
-      "sourceSha256": "347aecb87b03a3f5af91ff5cbdc910b710ea27ff64182b3aba54270ad7bf7625",
-      "settingsVersion": 1,
+      "sourceSha256": "73902ecd0d3e1d5f558f610a3c823795e3bdbb42b95d2b15f64cf4126c961e9a",
+      "settingsVersion": 2,
+      "hasAlpha": true,
       "webp": "characters/orpheus-dal.webp",
       "avif": "characters/orpheus-dal.avif",
-      "width": 900,
-      "height": 1200
+      "width": 720,
+      "height": 1280
+    },
+    "characters/orpheus-dal-alt": {
+      "sourceSha256": "9d1e0a4ef0f1fa0bfe5c6ea0b87ea832242a7a512fd5878ae43d28b407a2a4c9",
+      "settingsVersion": 2,
+      "hasAlpha": true,
+      "webp": "characters/orpheus-dal-alt.webp",
+      "avif": "characters/orpheus-dal-alt.avif",
+      "width": 720,
+      "height": 1280
     },
     "characters/ren-sho": {
-      "sourceSha256": "b75311bc0cc3afca04fe04c3997d0f5de44783dc40ddf20c9707d322dda83248",
-      "settingsVersion": 1,
+      "sourceSha256": "ad598f9e01b05adc48a75e315edeb6a614ade17d0c8ff9f9b0f915eaa900dd7e",
+      "settingsVersion": 2,
+      "hasAlpha": true,
       "webp": "characters/ren-sho.webp",
       "avif": "characters/ren-sho.avif",
-      "width": 900,
-      "height": 1200
+      "width": 720,
+      "height": 1280
+    },
+    "characters/ren-sho-alt": {
+      "sourceSha256": "2e0ef21ddeb8f2fa256f62a449dd88f80a4389424506ce268837712adb43194f",
+      "settingsVersion": 2,
+      "hasAlpha": true,
+      "webp": "characters/ren-sho-alt.webp",
+      "avif": "characters/ren-sho-alt.avif",
+      "width": 720,
+      "height": 1280
     },
     "characters/sera-ash": {
-      "sourceSha256": "440be5d77bebc247bede8eb164bfbf422a4e0fd9bac05a2f8b035c3546f7ae91",
-      "settingsVersion": 1,
+      "sourceSha256": "a4c5b321561d44b0636c87b4c99ec254ec77817fd672cb3907d7af4f14fcf6d9",
+      "settingsVersion": 2,
+      "hasAlpha": true,
       "webp": "characters/sera-ash.webp",
       "avif": "characters/sera-ash.avif",
-      "width": 900,
-      "height": 1200
+      "width": 720,
+      "height": 1280
+    },
+    "characters/sera-ash-alt": {
+      "sourceSha256": "9322023d7da7d8045c483a785fb104999caf7f805e453326001cae5374133ca2",
+      "settingsVersion": 2,
+      "hasAlpha": true,
+      "webp": "characters/sera-ash-alt.webp",
+      "avif": "characters/sera-ash-alt.avif",
+      "width": 720,
+      "height": 1280
     },
     "characters/yuna-rek": {
-      "sourceSha256": "710e75a4782975d971007d4bee8e360465681deb222b89e7f5927ee5934e6ff4",
-      "settingsVersion": 1,
+      "sourceSha256": "70252acc120dc680332012d381895fc359a211792671a996831aea006ecd3628",
+      "settingsVersion": 2,
+      "hasAlpha": true,
       "webp": "characters/yuna-rek.webp",
       "avif": "characters/yuna-rek.avif",
-      "width": 900,
-      "height": 1200
+      "width": 720,
+      "height": 1280
+    },
+    "characters/yuna-rek-alt": {
+      "sourceSha256": "538a57bd440a822122f227e1e1184c17ca1f759d7d47f1a4634cf82ee323e73b",
+      "settingsVersion": 2,
+      "hasAlpha": true,
+      "webp": "characters/yuna-rek-alt.webp",
+      "avif": "characters/yuna-rek-alt.avif",
+      "width": 720,
+      "height": 1280
     },
     "meta/og-default": {
       "sourceSha256": "2bea3ed98624c948f40f822c1cf941bf486926d35e0673b18d5547063fdc8504",
-      "settingsVersion": 1,
+      "settingsVersion": 2,
+      "hasAlpha": true,
       "webp": "meta/og-default.webp",
       "avif": "meta/og-default.avif",
       "width": 1200,
@@ -81,7 +164,8 @@
     },
     "works/ash-throne": {
       "sourceSha256": "f26093adbdfab93368c90129a09ae15c907c73c119b347f0a131af55f1f3297a",
-      "settingsVersion": 1,
+      "settingsVersion": 2,
+      "hasAlpha": true,
       "webp": "works/ash-throne.webp",
       "avif": "works/ash-throne.avif",
       "width": 900,
@@ -89,7 +173,8 @@
     },
     "works/midnight-garden": {
       "sourceSha256": "c3a50805d3d3f5a8c6cc21f234fed0f3429580e55ae092587995326861f51354",
-      "settingsVersion": 1,
+      "settingsVersion": 2,
+      "hasAlpha": true,
       "webp": "works/midnight-garden.webp",
       "avif": "works/midnight-garden.avif",
       "width": 900,
@@ -97,7 +182,8 @@
     },
     "works/silver-oath": {
       "sourceSha256": "a2550b6c6dabaab6e1040e0cbb8865f9f8574492d3edc00cee35ddde7fbe6346",
-      "settingsVersion": 1,
+      "settingsVersion": 2,
+      "hasAlpha": true,
       "webp": "works/silver-oath.webp",
       "avif": "works/silver-oath.avif",
       "width": 900,

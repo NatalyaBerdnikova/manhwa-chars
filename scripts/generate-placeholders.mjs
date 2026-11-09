@@ -1,6 +1,8 @@
 /**
  * Draws original placeholder illustrations (not traced from any comic)
- * into src/assets/source. Run `npm run images` afterwards.
+ * into src/assets/source. Character files are full-body cutouts with a
+ * transparent background, plus a hover pose (`*-alt.png`).
+ * Run `npm run images` afterwards.
  */
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
@@ -10,61 +12,118 @@ import sharp from 'sharp';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const source = path.join(root, 'src', 'assets', 'source');
 
-function portrait(p) {
-  const bangs = {
-    long: `<path d="M292 530 C310 360 380 292 450 292 C530 292 600 360 612 540 C555 455 500 448 450 460 C395 448 340 460 292 530 Z" fill="${p.hair}"/>
-      <path d="M300 560 C330 500 390 490 450 500 C510 490 570 505 610 560 C560 520 500 530 450 528 C395 530 340 520 300 560 Z" fill="${p.hair}" opacity="0.95"/>`,
-    short: `<path d="M305 545 C318 370 385 305 450 305 C525 305 590 375 605 550 C548 470 500 455 450 458 C390 455 345 480 305 545 Z" fill="${p.hair}"/>`,
-    bob: `<path d="M275 520 C268 700 310 790 360 805 L545 805 C600 785 640 690 628 515 C575 370 500 305 450 305 C385 305 320 385 275 520 Z" fill="${p.hair}"/>`,
-    bun: `<path d="M308 545 C320 375 388 310 450 310 C522 310 588 380 602 548 C550 475 498 458 450 460 C392 458 348 482 308 545 Z" fill="${p.hair}"/>
-      <circle cx="575" cy="355" r="52" fill="${p.hair}"/>
-      <circle cx="575" cy="355" r="16" fill="${p.accent}"/>`,
-    waves: `<path d="M300 545 C340 400 395 330 450 328 C515 326 575 400 610 545 C545 470 495 490 450 478 C400 490 345 470 300 545 Z" fill="${p.hair}"/>`,
-    side: `<path d="M318 560 C300 390 370 310 450 308 C540 306 600 390 608 530 C560 470 515 455 468 460 C430 390 360 430 318 560 Z" fill="${p.hair}"/>
-      <path d="M330 470 C360 560 345 680 360 790" stroke="${p.hair}" stroke-width="36" stroke-linecap="round" fill="none"/>`,
+/**
+ * Full-body cutout on a transparent canvas. No background rect: the PNG
+ * keeps an alpha channel so the figure can stand on the podium and pop
+ * out of a product tile. `pose: "alt"` is the hover variant.
+ */
+function figure(p) {
+  const alt = p.pose === 'alt';
+  const g = p.gaze || 0;
+  const smile = alt ? 28 : 16;
+  const hairBack = {
+    long: `<path d="M300 250 C250 340 214 560 236 980 L318 980 C300 620 330 390 360 300 Z" fill="${p.hair}"/>
+      <path d="M420 250 C470 340 506 560 484 980 L402 980 C420 620 390 390 360 300 Z" fill="${p.hair}"/>`,
+    waves: `<path d="M292 260 C230 360 200 560 250 900 C300 820 270 640 320 520 C300 420 310 320 340 270 Z" fill="${p.hair}"/>
+      <path d="M428 260 C490 360 520 560 470 900 C420 820 450 640 400 520 C420 420 410 320 380 270 Z" fill="${p.hair}"/>`,
+    side: `<path d="M300 280 C230 360 210 560 248 860 C300 760 270 560 330 420 C310 340 300 300 330 270 Z" fill="${p.hair}"/>`,
+    bob: `<path d="M278 236 C262 146 468 140 462 246 L448 338 C400 358 314 358 278 336 Z" fill="${p.hair}"/>`,
+    bun: `<path d="M286 270 C278 160 450 150 452 280 C430 230 310 230 286 280 Z" fill="${p.hair}"/>`,
+    short: `<path d="M292 275 C286 155 448 150 446 285 C420 230 314 228 292 280 Z" fill="${p.hair}"/>`,
   }[p.style];
 
-  const hairBack =
-    p.style === 'long' || p.style === 'waves'
-      ? `<path d="M330 580 C310 840 325 1040 360 1200 L540 1200 C575 1040 590 840 570 580 C540 490 500 450 450 450 C400 450 360 500 330 580 Z" fill="${p.hair}"/>`
-      : '';
+  const scalp = `<ellipse cx="360" cy="162" rx="86" ry="40" fill="${p.hair}"/>`;
+  const hairFront = {
+    long: `${scalp}<path d="M292 210 C310 132 420 128 446 214 C400 176 322 176 292 220 Z" fill="${p.hair}"/>
+      <path d="M286 220 C268 300 274 390 314 450" stroke="${p.hair}" stroke-width="30" stroke-linecap="round" fill="none"/>
+      <path d="M448 214 C470 300 462 390 420 450" stroke="${p.hair}" stroke-width="30" stroke-linecap="round" fill="none"/>`,
+    waves: `${scalp}<path d="M300 205 C318 140 418 136 438 214 C396 180 328 180 300 214 Z" fill="${p.hair}"/>
+      <path d="M292 230 C250 310 268 420 320 470" stroke="${p.hair}" stroke-width="26" stroke-linecap="round" fill="none"/>
+      <path d="M440 220 C478 310 460 430 410 480" stroke="${p.hair}" stroke-width="26" stroke-linecap="round" fill="none"/>`,
+    side: `${scalp}<path d="M318 214 C300 150 450 142 458 240 C410 190 340 196 312 230 Z" fill="${p.hair}"/>
+      <path d="M304 250 C250 340 236 500 276 680" stroke="${p.hair}" stroke-width="36" stroke-linecap="round" fill="none"/>`,
+    bob: `${scalp}<path d="M300 196 C328 150 408 148 434 204 C390 176 332 176 300 206 Z" fill="${p.hair}"/>`,
+    bun: `${scalp}<path d="M300 200 C322 146 430 150 440 214 C396 180 326 180 300 214 Z" fill="${p.hair}"/>
+      <circle cx="456" cy="168" r="34" fill="${p.hair}"/>
+      <circle cx="456" cy="168" r="11" fill="${p.accent}"/>`,
+    short: `${scalp}<path d="M304 214 C314 148 430 146 438 230 C400 188 328 190 304 222 Z" fill="${p.hair}"/>
+      <path d="M292 248 C286 290 300 320 324 330" stroke="${p.hair}" stroke-width="16" stroke-linecap="round" fill="none"/>`,
+  }[p.style];
+
+  const floor = p.garment === 'dress' || p.garment === 'robe';
+  const hem = floor ? 1120 : p.garment === 'uniform' ? 860 : 980;
+  const garment =
+    p.garment === 'dress' || p.garment === 'robe'
+      ? `<path d="M262 400 C236 470 214 620 196 ${hem} H524 C506 620 484 470 458 400 C430 434 290 434 262 400 Z" fill="${p.cloth}"/>
+         <path d="M330 396 L360 470 L390 396" fill="${p.skin}"/>
+         <path d="M248 470 C300 520 420 520 472 470 L500 ${hem - 40} H220 Z" fill="${p.cloth2}" opacity="0.28"/>`
+      : `<path d="M268 396 L250 ${hem} H470 L452 396 Q360 438 268 396 Z" fill="${p.cloth}"/>
+         <path d="M338 400 L360 468 L382 400" fill="${p.skin}"/>
+         <path d="M352 520 H368 V${hem} H352 Z" fill="${p.cloth2}"/>`;
+
+  const legs = floor
+    ? ''
+    : `<path d="M292 ${hem - 20} L276 1188 H348 L356 ${hem} Z" fill="${p.leg}"/>
+       <path d="M364 ${hem} L372 1188 H444 L428 ${hem - 20} Z" fill="${p.leg}"/>`;
+
+  const shoes = `<ellipse cx="312" cy="${floor ? 1136 : 1204}" rx="46" ry="16" fill="${p.shoe}"/>
+    <ellipse cx="408" cy="${floor ? 1136 : 1204}" rx="46" ry="16" fill="${p.shoe}"/>`;
+
+  const sleeve = p.cloth;
+  const arms = alt
+    ? `<path d="M268 430 C200 360 168 280 214 214" stroke="${sleeve}" stroke-width="34" stroke-linecap="round" fill="none"/>
+       <circle cx="214" cy="200" r="15" fill="${p.skin}"/>
+       <path d="M456 440 C530 510 508 660 442 730" stroke="${sleeve}" stroke-width="34" stroke-linecap="round" fill="none"/>
+       <circle cx="430" cy="742" r="15" fill="${p.skin}"/>`
+    : `<path d="M262 424 C196 530 184 700 224 860" stroke="${sleeve}" stroke-width="34" stroke-linecap="round" fill="none"/>
+       <circle cx="224" cy="874" r="15" fill="${p.skin}"/>
+       <path d="M458 424 C524 530 536 700 496 860" stroke="${sleeve}" stroke-width="34" stroke-linecap="round" fill="none"/>
+       <circle cx="496" cy="874" r="15" fill="${p.skin}"/>`;
+
+  const prop =
+    alt && p.prop === 'blade'
+      ? `<path d="M188 210 L156 560" stroke="#f4f7fb" stroke-width="8" stroke-linecap="round"/>
+         <path d="M146 196 H196" stroke="${p.accent}" stroke-width="7" stroke-linecap="round"/>`
+      : alt && p.prop === 'book'
+        ? `<g transform="rotate(-16 188 230)">
+             <rect x="154" y="188" width="58" height="74" rx="3" fill="#f7f3ea" stroke="${p.brow}" stroke-width="3"/>
+             <path d="M183 188 V262" stroke="${p.brow}" stroke-width="2"/>
+           </g>`
+        : '';
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="${p.bg}"/>
-      <stop offset="1" stop-color="${p.bg2}"/>
-    </linearGradient>
-  </defs>
-  <rect width="900" height="1200" fill="url(#bg)"/>
-  <circle cx="680" cy="250" r="170" fill="${p.accent}" opacity="0.45"/>
-  <circle cx="180" cy="980" r="120" fill="${p.accent}" opacity="0.18"/>
-  <path d="M110 1200 L110 980 Q140 820 310 800 L590 800 Q760 820 790 980 L790 1200 Z" fill="${p.cloth}"/>
-  <path d="M390 800 L450 910 L510 800" fill="${p.cloth2}"/>
-  ${hairBack}
-  <ellipse cx="302" cy="575" rx="24" ry="34" fill="${p.skin}"/>
-  <ellipse cx="598" cy="575" rx="24" ry="34" fill="${p.skin}"/>
-  <rect x="402" y="700" width="96" height="110" rx="42" fill="${p.skin}"/>
-  ${p.style === 'bob' ? bangs : ''}
-  <ellipse cx="450" cy="555" rx="152" ry="180" fill="${p.skin}" stroke="${p.skinShadow}" stroke-width="3"/>
-  <ellipse cx="385" cy="615" rx="30" ry="16" fill="${p.blush}" opacity="0.7"/>
-  <ellipse cx="515" cy="615" rx="30" ry="16" fill="${p.blush}" opacity="0.7"/>
-  ${p.style === 'bob' ? '' : bangs}
-  <path d="M356 505 Q392 488 430 506" stroke="${p.brow}" stroke-width="6" fill="none" stroke-linecap="round"/>
-  <path d="M470 506 Q508 488 544 505" stroke="${p.brow}" stroke-width="6" fill="none" stroke-linecap="round"/>
-  <ellipse cx="${390 + p.gaze}" cy="548" rx="34" ry="18" fill="#fffaf6"/>
-  <ellipse cx="${508 + p.gaze}" cy="548" rx="34" ry="18" fill="#fffaf6"/>
-  <circle cx="${392 + p.gaze}" cy="549" r="11" fill="${p.eye}"/>
-  <circle cx="${510 + p.gaze}" cy="549" r="11" fill="${p.eye}"/>
-  <circle cx="${392 + p.gaze}" cy="549" r="5.5" fill="#1b1714"/>
-  <circle cx="${510 + p.gaze}" cy="549" r="5.5" fill="#1b1714"/>
-  <circle cx="${397 + p.gaze}" cy="545" r="3" fill="#fff"/>
-  <circle cx="${515 + p.gaze}" cy="545" r="3" fill="#fff"/>
-  <path d="M450 570 Q444 612 454 632" stroke="${p.skinShadow}" stroke-width="4" fill="none" stroke-linecap="round"/>
-  <path d="M412 668 Q450 688 488 668" stroke="${p.lip}" stroke-width="5" fill="none" stroke-linecap="round"/>
-  ${p.extra}
-  <rect x="32" y="32" width="836" height="1136" rx="40" fill="none" stroke="${p.frame}" stroke-width="3"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1280" viewBox="0 0 720 1280">
+  <g transform="${alt ? 'translate(16 0)' : ''}">
+    ${hairBack}
+    ${legs}
+    ${garment}
+    ${shoes}
+    ${p.belt || ''}
+    ${arms}
+    ${prop}
+    <g transform="${alt ? 'rotate(-8 360 236)' : ''}">
+      <ellipse cx="286" cy="250" rx="16" ry="22" fill="${p.skin}"/>
+      <ellipse cx="434" cy="250" rx="16" ry="22" fill="${p.skin}"/>
+      <path d="M338 300 H382 L376 438 H344 Z" fill="${p.skin}"/>
+      <ellipse cx="360" cy="236" rx="82" ry="96" fill="${p.skin}"/>
+      <ellipse cx="318" cy="268" rx="20" ry="11" fill="${p.blush}" opacity="0.75"/>
+      <ellipse cx="402" cy="268" rx="20" ry="11" fill="${p.blush}" opacity="0.75"/>
+      <path d="M300 196 Q332 180 362 198" stroke="${p.brow}" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M358 198 Q390 180 422 196" stroke="${p.brow}" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="${322 + g}" cy="236" rx="26" ry="15" fill="#fffaf6"/>
+      <ellipse cx="${398 + g}" cy="236" rx="26" ry="15" fill="#fffaf6"/>
+      <circle cx="${324 + g}" cy="237" r="8.5" fill="${p.eye}"/>
+      <circle cx="${400 + g}" cy="237" r="8.5" fill="${p.eye}"/>
+      <circle cx="${324 + g}" cy="237" r="4.2" fill="#1b1714"/>
+      <circle cx="${400 + g}" cy="237" r="4.2" fill="#1b1714"/>
+      <circle cx="${328 + g}" cy="234" r="2.1" fill="#fff"/>
+      <circle cx="${404 + g}" cy="234" r="2.1" fill="#fff"/>
+      <path d="M360 248 Q356 286 364 304" stroke="${p.skinShadow}" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M332 312 Q360 ${312 + smile} 388 312" stroke="${p.lip}" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+      ${hairFront}
+      ${p.jewel || ''}
+    </g>
+  </g>
 </svg>`;
 }
 
@@ -134,8 +193,7 @@ const people = [
   {
     file: 'characters/lien-sol.png',
     style: 'long',
-    bg: '#d7e1ea',
-    bg2: '#b7c6d4',
+    garment: 'coat',
     hair: '#e4e8ee',
     skin: '#f3d5c6',
     skinShadow: '#e0b39d',
@@ -144,17 +202,18 @@ const people = [
     brow: '#9aa2ab',
     lip: '#c47d74',
     cloth: '#3e4c5c',
-    cloth2: '#2d3948',
+    cloth2: '#c5d0dc',
+    leg: '#2c3848',
+    shoe: '#1c242e',
     accent: '#f7fbff',
-    frame: 'rgba(255,255,255,0.65)',
     gaze: 0,
-    extra: `<path d="M360 400 Q450 360 540 400" fill="none" stroke="#f7fbff" stroke-width="8" stroke-linecap="round"/>`,
+    prop: 'blade',
+    jewel: `<path d="M300 168 Q360 142 420 168" fill="none" stroke="#f7fbff" stroke-width="6" stroke-linecap="round"/>`,
   },
   {
     file: 'characters/kayren-vale.png',
     style: 'short',
-    bg: '#ead4cb',
-    bg2: '#c9a394',
+    garment: 'coat',
     hair: '#1c1a1a',
     skin: '#e7b892',
     skinShadow: '#c98b62',
@@ -164,16 +223,17 @@ const people = [
     lip: '#a85a52',
     cloth: '#2a2422',
     cloth2: '#c6a15a',
+    leg: '#1a1818',
+    shoe: '#111',
     accent: '#c6a15a',
-    frame: 'rgba(255,255,255,0.4)',
     gaze: 2,
-    extra: `<path d="M360 860 H540" stroke="#c6a15a" stroke-width="8" stroke-linecap="round"/>`,
+    prop: '',
+    belt: `<path d="M268 760 H452" stroke="#c6a15a" stroke-width="8" stroke-linecap="round"/>`,
   },
   {
     file: 'characters/yuna-rek.png',
     style: 'bob',
-    bg: '#e5eedd',
-    bg2: '#c9d7b8',
+    garment: 'dress',
     hair: '#6d4b34',
     skin: '#f0cbb4',
     skinShadow: '#d9a88c',
@@ -183,16 +243,17 @@ const people = [
     lip: '#c47870',
     cloth: '#f6f1e6',
     cloth2: '#d7e3c4',
+    leg: '#f6f1e6',
+    shoe: '#c4b39a',
     accent: '#d7e3c4',
-    frame: 'rgba(255,255,255,0.7)',
     gaze: -2,
-    extra: `<circle cx="560" cy="470" r="10" fill="#d7e3c4"/>`,
+    prop: 'book',
+    jewel: `<circle cx="438" cy="176" r="7" fill="#d7e3c4"/>`,
   },
   {
     file: 'characters/mira-han.png',
     style: 'bun',
-    bg: '#1c3330',
-    bg2: '#31584e',
+    garment: 'dress',
     hair: '#3a2a22',
     skin: '#e8c0a4',
     skinShadow: '#c99678',
@@ -201,18 +262,19 @@ const people = [
     brow: '#2a211c',
     lip: '#b86a62',
     cloth: '#234038',
-    cloth2: '#16302b',
+    cloth2: '#d5e6c8',
+    leg: '#234038',
+    shoe: '#14241f',
     accent: '#d5e6c8',
-    frame: 'rgba(255,255,255,0.22)',
     gaze: 0,
-    extra: `<path d="M250 300 C280 250 310 270 300 320" stroke="#d5e6c8" stroke-width="8" fill="none" stroke-linecap="round"/>
-      <ellipse cx="292" cy="292" rx="16" ry="8" fill="#d5e6c8" transform="rotate(-30 292 292)"/>`,
+    prop: '',
+    jewel: `<ellipse cx="492" cy="150" rx="14" ry="8" fill="#d5e6c8" transform="rotate(-24 492 150)"/>
+      <circle cx="486" cy="150" r="4" fill="#e7b7b0"/>`,
   },
   {
     file: 'characters/nox.png',
     style: 'short',
-    bg: '#241c2c',
-    bg2: '#4a3148',
+    garment: 'coat',
     hair: '#f4f1ea',
     skin: '#f6e4da',
     skinShadow: '#e3c3b6',
@@ -221,17 +283,17 @@ const people = [
     brow: '#d9d3cc',
     lip: '#a84a55',
     cloth: '#141216',
-    cloth2: '#2a2030',
+    cloth2: '#c98b98',
+    leg: '#0e0c10',
+    shoe: '#0a090b',
     accent: '#c98b98',
-    frame: 'rgba(255,255,255,0.18)',
     gaze: 3,
-    extra: `<path d="M340 760 H560 V900 Q450 860 340 900 Z" fill="#141216"/>`,
+    prop: '',
   },
   {
     file: 'characters/sera-ash.png',
     style: 'waves',
-    bg: '#3a2a24',
-    bg2: '#6a4034',
+    garment: 'dress',
     hair: '#8a4030',
     skin: '#f0c8b0',
     skinShadow: '#d7a88c',
@@ -240,17 +302,18 @@ const people = [
     brow: '#6a3024',
     lip: '#b85a52',
     cloth: '#6e2e28',
-    cloth2: '#4a2420',
+    cloth2: '#e6c27a',
+    leg: '#6e2e28',
+    shoe: '#3a1816',
     accent: '#e6c27a',
-    frame: 'rgba(255,255,255,0.22)',
     gaze: 0,
-    extra: `<path d="M355 430 Q450 390 545 430" fill="none" stroke="#e6c27a" stroke-width="8" stroke-linecap="round"/>`,
+    prop: '',
+    jewel: `<path d="M306 164 Q360 140 414 164" fill="none" stroke="#e6c27a" stroke-width="6" stroke-linecap="round"/>`,
   },
   {
     file: 'characters/ren-sho.png',
     style: 'side',
-    bg: '#d5dee6',
-    bg2: '#aebcc8',
+    garment: 'uniform',
     hair: '#1a1c22',
     skin: '#efcbb8',
     skinShadow: '#d7aa92',
@@ -259,17 +322,17 @@ const people = [
     brow: '#1a1c22',
     lip: '#b86e68',
     cloth: '#2c3a4e',
-    cloth2: '#1e2a3a',
+    cloth2: '#8eacc4',
+    leg: '#1e2a3a',
+    shoe: '#141a24',
     accent: '#8eacc4',
-    frame: 'rgba(255,255,255,0.55)',
     gaze: -3,
-    extra: '',
+    prop: '',
   },
   {
     file: 'characters/orpheus-dal.png',
     style: 'long',
-    bg: '#2c3148',
-    bg2: '#4d4468',
+    garment: 'robe',
     hair: '#16141c',
     skin: '#f3d3c4',
     skinShadow: '#e0b5a2',
@@ -278,11 +341,13 @@ const people = [
     brow: '#241e2c',
     lip: '#a86a78',
     cloth: '#cfc6d8',
-    cloth2: '#b7adc4',
+    cloth2: '#8a7e9c',
+    leg: '#cfc6d8',
+    shoe: '#2a2434',
     accent: '#d5cbe2',
-    frame: 'rgba(255,255,255,0.25)',
     gaze: 1,
-    extra: `<rect x="560" y="470" width="46" height="14" rx="7" fill="#d5cbe2"/>`,
+    prop: '',
+    jewel: `<rect x="430" y="156" width="36" height="10" rx="5" fill="#d5cbe2"/>`,
   },
 ];
 
@@ -298,7 +363,9 @@ await writeSvg('works/midnight-garden.png', cover('garden'), 900, 1200);
 await writeSvg('works/ash-throne.png', cover('ash'), 900, 1200);
 await writeSvg('meta/og-default.png', og(), 1200, 630);
 for (const person of people) {
-  await writeSvg(person.file, portrait(person), 900, 1200);
+  await writeSvg(person.file, figure({ ...person, pose: 'idle' }), 720, 1280);
+  const altFile = person.file.replace(/\.png$/, '-alt.png');
+  await writeSvg(altFile, figure({ ...person, pose: 'alt' }), 720, 1280);
 }
 
 const icons = path.join(root, 'public', 'icons');
