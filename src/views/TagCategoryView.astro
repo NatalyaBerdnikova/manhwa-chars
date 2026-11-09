@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CharacterCard from '../components/CharacterCard.astro';
+import BiText from '../components/BiText.astro';
+import UiText from '../components/UiText.astro';
+import { documentTitle, pick, t } from '../i18n';
+import { categoryById } from '../data/tags';
+import { getCatalog } from '../lib/catalog';
+import { breadcrumbLd } from '../lib/seo';
+import { excerpt } from '../lib/text';
+import { href } from '../lib/urls';
+
+interface Props {
+  category: string;
+}
+
+const { category: categoryId } = Astro.props;
+const category = categoryById(categoryId);
+if (!category) throw new Error(`Unknown tag category "${categoryId}".`);
+const { characters, worksById } = await getCatalog();
+const label = pick(category.label, 'ru');
+const labelEn = pick(category.label, 'en');
+const description = category.description
+  ? pick(category.description, 'ru').text
+  : t('ru', 'tags.categoryLead', { category: label.text });
+const descriptionEn = category.description
+  ? pick(category.description, 'en').text
+  : t('en', 'tags.categoryLead', { category: labelEn.text });
+const matches = characters
+  .filter((character) => Boolean((character.data.tags ?? {})[category.id]))
+  .sort((a, b) => pick(a.data.name, 'ru').text.localeCompare(pick(b.data.name, 'ru').text, 'ru'));
+const crumbs = [
+  { ru: t('ru', 'crumbs.home'), en: t('en', 'crumbs.home'), path: '' },
+  { ru: t('ru', 'tags.title'), en: t('en', 'tags.title'), path: 'tags' },
+  { ru: label.text, en: labelEn.text, path: `tags/${category.id}` },
+];
+---
+
+<BaseLayout
+  routePath={`tags/${category.id}`}
+  titleRu={documentTitle('ru', label.text)}
+  titleEn={documentTitle('en', labelEn.text)}
+  descriptionRu={excerpt(description)}
+  descriptionEn={excerpt(descriptionEn)}
+  imageAltRu={t('ru', 'meta.defaultOgAlt')}
+  jsonLd={[breadcrumbLd(crumbs)]}
+>
+  <div class="wrap page">
+    <Breadcrumbs crumbs={crumbs} />
+    <h1><BiText ru={label.text} en={labelEn.text} /></h1>
+    <p class="lede" data-i18n="ru">{description}</p>
+    <p class="lede" data-i18n="en">{descriptionEn}</p>
+    <h2 class="section"><UiText k="tags.allValues" /></h2>
+    <ul class="chip-row">
+      {
+        category.values.map((value) => {
+          const used = characters.filter((character) => (character.data.tags ?? {})[category.id] === value.id).length;
+          return (
+            <li>
+              <a class="chip" href={href(`tags/${category.id}/${value.id}`)}>
+                <BiText ru={value.label.ru} en={value.label.en} />
+                <span>{used}</span>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+    <h2 class="section"><UiText k="tags.inCategory" /></h2>
+    {
+      matches.length === 0 ? (
+        <p class="empty"><UiText k="tags.empty" /></p>
+      ) : (
+        <ul class="grid">
+          {matches.map((character) => {
+            const work = worksById.get(character.data.work);
+            if (!work) return null;
+            return (
+              <li>
+                <CharacterCard character={character} work={work} level="h3" />
+              </li>
+            );
+          })}
+        </ul>
+      )
+    }
+  </div>
+</BaseLayout>

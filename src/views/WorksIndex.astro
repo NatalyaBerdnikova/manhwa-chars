@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import WorkCard from '../components/WorkCard.astro';
+import UiText from '../components/UiText.astro';
+import { documentTitle, pick, t } from '../i18n';
+import { getCatalog } from '../lib/catalog';
+import { breadcrumbLd } from '../lib/seo';
+
+const { works, charactersByWork } = await getCatalog();
+const ordered = [...works].sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0) || pick(a.data.title, 'ru').text.localeCompare(pick(b.data.title, 'ru').text, 'ru'));
+const crumbs = [
+  { ru: t('ru', 'crumbs.home'), en: t('en', 'crumbs.home'), path: '' },
+  { ru: t('ru', 'works.title'), en: t('en', 'works.title'), path: 'works' },
+];
+---
+
+<BaseLayout
+  routePath="works"
+  titleRu={documentTitle('ru', t('ru', 'works.title'))}
+  titleEn={documentTitle('en', t('en', 'works.title'))}
+  descriptionRu={t('ru', 'meta.worksDescription')}
+  descriptionEn={t('en', 'meta.worksDescription')}
+  imageAltRu={t('ru', 'meta.defaultOgAlt')}
+  jsonLd={[breadcrumbLd(crumbs)]}
+>
+  <div class="wrap page">
+    <Breadcrumbs crumbs={crumbs} />
+    <h1><UiText k="works.title" /></h1>
+    <p class="lede"><UiText k="works.lead" /></p>
+    <ul class="grid section">
+      {
+        ordered.map((work) => (
+          <li>
+            <WorkCard work={work} count={charactersByWork.get(work.id)?.length ?? 0} />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</BaseLayout>

@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import UiText from '../components/UiText.astro';
+import { documentTitle, t } from '../i18n';
+import { href } from '../lib/urls';
+---
+
+<BaseLayout
+  routePath=""
+  titleRu={documentTitle('ru', t('ru', 'notFound.title'))}
+  titleEn={documentTitle('en', t('en', 'notFound.title'))}
+  descriptionRu={t('ru', 'notFound.body')}
+  descriptionEn={t('en', 'notFound.body')}
+  imageAltRu={t('ru', 'meta.defaultOgAlt')}
+  noindex
+>
+  <div class="wrap page">
+    <h1><UiText k="notFound.title" /></h1>
+    <p class="lede"><UiText k="notFound.body" /></p>
+    <div class="actions">
+      <a class="button" href={href()}><UiText k="notFound.home" /></a>
+      <a class="button secondary" href={href('characters')}><UiText k="notFound.characters" /></a>
+    </div>
+  </div>
+</BaseLayout>

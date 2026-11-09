@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CharacterCard from '../components/CharacterCard.astro';
+import UiText from '../components/UiText.astro';
+import BiText from '../components/BiText.astro';
+import { documentTitle, pick, plural, t } from '../i18n';
+import { tagCategories } from '../data/tags';
+import { getCatalog } from '../lib/catalog';
+import { breadcrumbLd } from '../lib/seo';
+
+const { characters, worksById } = await getCatalog();
+const sorted = [...characters].sort((a, b) =>
+  pick(a.data.name, 'ru').text.localeCompare(pick(b.data.name, 'ru').text, 'ru'),
+);
+const crumbs = [
+  { ru: t('ru', 'crumbs.home'), en: t('en', 'crumbs.home'), path: '' },
+  { ru: t('ru', 'characters.title'), en: t('en', 'characters.title'), path: 'characters' },
+];
+const filters = tagCategories
+  .map((category) => ({
+    category,
+    values: category.values
+      .map((value) => ({
+        value,
+        count: characters.filter((character) => (character.data.tags ?? {})[category.id] === value.id).length,
+      }))
+      .filter((item) => item.count > 0),
+  }))
+  .filter((group) => group.values.length > 0);
+---
+
+<BaseLayout
+  routePath="characters"
+  titleRu={documentTitle('ru', t('ru', 'characters.title'))}
+  titleEn={documentTitle('en', t('en', 'characters.title'))}
+  descriptionRu={t('ru', 'meta.charactersDescription')}
+  descriptionEn={t('en', 'meta.charactersDescription')}
+  imageAltRu={t('ru', 'meta.defaultOgAlt')}
+  jsonLd={[breadcrumbLd(crumbs)]}
+>
+  <div class="wrap page" data-character-index>
+    <Breadcrumbs crumbs={crumbs} />
+    <h1><UiText k="characters.title" /></h1>
+    <p class="lede"><UiText k="characters.lead" /></p>
+    <p class="lede"><noscript><UiText k="filters.noscript" /></noscript></p>
+
+    <div class="catalog">
+      <input class="filter-toggle" id="filter-open" type="checkbox" />
+      <label class="filter-launch" for="filter-open"><UiText k="filters.show" /></label>
+      <aside class="sidebar" aria-labelledby="filters-heading">
+        <h2 id="filters-heading"><UiText k="filters.heading" /></h2>
+        <div class="filter-block">
+          <h3><UiText k="sort.label" /></h3>
+          <select id="catalog-sort" data-sort>
+            <option value="featured" data-ru={t('ru', 'sort.featured')} data-en={t('en', 'sort.featured')}>{t('ru', 'sort.featured')}</option>
+            <option value="newest" data-ru={t('ru', 'sort.newest')} data-en={t('en', 'sort.newest')}>{t('ru', 'sort.newest')}</option>
+            <option value="name" data-ru={t('ru', 'sort.nameAsc')} data-en={t('en', 'sort.nameAsc')}>{t('ru', 'sort.nameAsc')}</option>
+            <option value="name-desc" data-ru={t('ru', 'sort.nameDesc')} data-en={t('en', 'sort.nameDesc')}>{t('ru', 'sort.nameDesc')}</option>
+          </select>
+        </div>
+        {
+          filters.map((group) => (
+            <fieldset class="filter-block">
+              <legend>
+                <BiText ru={group.category.label.ru} en={group.category.label.en} />
+              </legend>
+              {group.values.map((item) => (
+                <label class="check">
+                  <input type="checkbox" data-filter={group.category.id} value={item.value.id} />
+                  <span>
+                    <BiText ru={item.value.label.ru} en={item.value.label.en} />
+                  </span>
+                  <span class="count">{item.count}</span>
+                </label>
+              ))}
+            </fieldset>
+          ))
+        }
+        <p style="margin-top: 0.8rem;">
+          <button type="button" class="button secondary" data-filter-clear><UiText k="filters.clear" /></button>
+        </p>
+      </aside>
+      <div>
+        <div class="toolbar">
+          <p class="filter-status" data-filter-status data-template-ru={t('ru', 'filters.status')} data-template-en={t('en', 'filters.status')}>
+            <span data-i18n="ru">{plural('ru', 'counts.characters', sorted.length)}</span><span data-i18n="en">{plural('en', 'counts.characters', sorted.length)}</span>
+          </p>
+        </div>
+        <p data-filter-empty hidden><UiText k="filters.empty" /></p>
+        <ul class="grid" data-catalog-grid>
+          {
+            sorted.map((character) => {
+              const work = worksById.get(character.data.work);
+              if (!work) return null;
+              const tags = Object.entries(character.data.tags ?? {})
+                .map(([key, value]) => `${key}:${value}`)
+                .join(' ');
+              return (
+                <li
+                  data-tags={tags}
+                  data-name-ru={pick(character.data.name, 'ru').text}
+                  data-name-en={pick(character.data.name, 'en').text}
+                  data-work-ru={pick(work.data.title, 'ru').text}
+                  data-work-en={pick(work.data.title, 'en').text}
+                  data-added={character.data.added ?? ''}
+                  data-featured={character.data.featured ? 'true' : 'false'}
+                >
+                  <CharacterCard character={character} work={work} />
+                </li>
+              );
+            })
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import '../scripts/catalog.ts';
+</script>

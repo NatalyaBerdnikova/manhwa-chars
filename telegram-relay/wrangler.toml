@@ -1,0 +1,13 @@
+name = "manhwa-chars-telegram"
+main = "src/index.ts"
+compatibility_date = "2026-11-01"
+
+# Public site origin, no trailing slash. Override per environment:
+#   npx wrangler deploy --var ALLOWED_ORIGIN:https://example.com
+[vars]
+ALLOWED_ORIGIN = "https://example.com"
+
+# Secrets (not stored here):
+#   npx wrangler secret put TELEGRAM_BOT_TOKEN
+#   npx wrangler secret put TELEGRAM_CHAT_ID
+#   npx wrangler secret put TURNSTILE_SECRET

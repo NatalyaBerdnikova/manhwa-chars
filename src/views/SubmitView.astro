@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import SubmissionForm from '../components/SubmissionForm.astro';
+import UiText from '../components/UiText.astro';
+import { documentTitle, t } from '../i18n';
+import { breadcrumbLd } from '../lib/seo';
+
+const crumbs = [
+  { ru: t('ru', 'crumbs.home'), en: t('en', 'crumbs.home'), path: '' },
+  { ru: t('ru', 'form.title'), en: t('en', 'form.title'), path: 'submit' },
+];
+---
+
+<BaseLayout
+  routePath="submit"
+  titleRu={documentTitle('ru', t('ru', 'form.title'))}
+  titleEn={documentTitle('en', t('en', 'form.title'))}
+  descriptionRu={t('ru', 'meta.submitDescription')}
+  descriptionEn={t('en', 'meta.submitDescription')}
+  imageAltRu={t('ru', 'meta.defaultOgAlt')}
+  jsonLd={[breadcrumbLd(crumbs)]}
+>
+  <div class="wrap page">
+    <Breadcrumbs crumbs={crumbs} />
+    <h1><UiText k="form.title" /></h1>
+    <p class="lede"><UiText k="form.lead" /></p>
+    <SubmissionForm />
+  </div>
+</BaseLayout>

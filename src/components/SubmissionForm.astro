@@ -1,0 +1,139 @@
+---
+import { formEndpoint, turnstileSiteKey } from '../config';
+import { t } from '../i18n';
+import UiText from './UiText.astro';
+import BiText from './BiText.astro';
+
+const configured = Boolean(formEndpoint);
+---
+
+{
+  configured ? (
+    <p class="note">
+      <BiText
+        ru="Заявка уходит в Telegram через отдельный приёмник. Токен бота в сайт не встроен."
+        en="The suggestion is delivered to Telegram through a separate relay. The bot token is not in the site."
+      />
+    </p>
+  ) : (
+    <p class="note">
+      <UiText k="form.notConfigured" />
+    </p>
+  )
+}
+
+<form
+  class="form"
+  id="submission-form"
+  method="POST"
+  action={configured ? formEndpoint : undefined}
+  accept-charset="UTF-8"
+  data-endpoint={formEndpoint}
+  data-success-ru={t('ru', 'form.success')}
+  data-success-en={t('en', 'form.success')}
+  data-error-ru={t('ru', 'form.error')}
+  data-error-en={t('en', 'form.error')}
+  data-rate-ru={t('ru', 'form.rateLimit')}
+  data-rate-en={t('en', 'form.rateLimit')}
+  data-sending-ru={t('ru', 'form.sending')}
+  data-sending-en={t('en', 'form.sending')}
+  data-turnstile-ru={t('ru', 'form.turnstile')}
+  data-turnstile-en={t('en', 'form.turnstile')}
+  data-missing-ru={t('ru', 'validation.valueMissing')}
+  data-missing-en={t('en', 'validation.valueMissing')}
+  data-email-ru={t('ru', 'validation.email')}
+  data-email-en={t('en', 'validation.email')}
+  data-url-ru={t('ru', 'validation.url')}
+  data-url-en={t('en', 'validation.url')}
+>
+  <p id="form-status" class="form-status" role="status" hidden></p>
+
+  <div class="hp" aria-hidden="true">
+    <label>
+      <UiText k="form.honeypot" />
+      <input type="text" name="bot-field" tabindex="-1" autocomplete="off" />
+    </label>
+  </div>
+
+  <fieldset class="choices">
+    <legend><UiText k="form.kindLegend" /></legend>
+    <label class="choice">
+      <input type="radio" name="kind" value="character" checked required />
+      <UiText k="form.kindCharacter" />
+    </label>
+    <label class="choice">
+      <input type="radio" name="kind" value="work" />
+      <UiText k="form.kindWork" />
+    </label>
+  </fieldset>
+
+  <div class="field">
+    <label for="work-title"><UiText k="form.workTitle" /></label>
+    <input id="work-title" name="work_title" type="text" required minlength="2" maxlength="200" autocomplete="off" data-field />
+    <p id="work-title-error" class="field-error" hidden></p>
+  </div>
+
+  <div class="field">
+    <label for="character-name"><UiText k="form.characterName" /></label>
+    <input id="character-name" name="character_name" type="text" maxlength="200" autocomplete="off" data-field data-required-for="character" />
+    <p class="hint"><UiText k="form.characterHint" /></p>
+    <p id="character-name-error" class="field-error" hidden></p>
+  </div>
+
+  <div class="field">
+    <label for="source-url"><UiText k="form.source" /></label>
+    <input id="source-url" name="source_url" type="url" required maxlength="500" inputmode="url" placeholder="https://" data-field />
+    <p class="hint"><UiText k="form.sourceHint" /></p>
+    <p id="source-url-error" class="field-error" hidden></p>
+  </div>
+
+  <div class="field">
+    <label for="image-url">
+      <UiText k="form.image" /> <span class="hint">(<UiText k="form.optional" />)</span>
+    </label>
+    <input id="image-url" name="image_url" type="url" maxlength="500" inputmode="url" placeholder="https://" data-field />
+    <p id="image-url-error" class="field-error" hidden></p>
+  </div>
+
+  <div class="field">
+    <label for="suggested-tags">
+      <UiText k="form.tags" /> <span class="hint">(<UiText k="form.optional" />)</span>
+    </label>
+    <textarea id="suggested-tags" name="suggested_tags" maxlength="500" rows="3" data-field></textarea>
+    <p class="hint"><UiText k="form.tagsHint" /></p>
+    <p id="suggested-tags-error" class="field-error" hidden></p>
+  </div>
+
+  <div class="field">
+    <label for="comments">
+      <UiText k="form.comments" /> <span class="hint">(<UiText k="form.optional" />)</span>
+    </label>
+    <textarea id="comments" name="comments" maxlength="4000" rows="5" data-field></textarea>
+    <p id="comments-error" class="field-error" hidden></p>
+  </div>
+
+  <div class="field">
+    <label for="contact-email">
+      <UiText k="form.email" /> <span class="hint">(<UiText k="form.optional" />)</span>
+    </label>
+    <input id="contact-email" name="contact_email" type="email" maxlength="200" autocomplete="email" data-field />
+    <p class="hint"><UiText k="form.emailHint" /></p>
+    <p id="contact-email-error" class="field-error" hidden></p>
+  </div>
+
+  <input type="hidden" name="locale" value="ru" data-locale />
+
+  {
+    turnstileSiteKey && (
+      <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
+    )
+  }
+
+  <button class="button" type="submit" disabled={!configured}><UiText k="form.submit" /></button>
+</form>
+
+{turnstileSiteKey && <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+
+<script>
+  import '../scripts/form.ts';
+</script>

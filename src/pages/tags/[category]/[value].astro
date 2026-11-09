@@ -1,0 +1,8 @@
+---
+import TagValueView from '../../../views/TagValueView.astro';
+import { tagValuePaths } from '../../../lib/static-paths';
+
+export const getStaticPaths = tagValuePaths;
+---
+
+<TagValueView category={Astro.params.category ?? ''} value={Astro.params.value ?? ''} />

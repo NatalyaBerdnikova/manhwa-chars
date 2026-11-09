@@ -1,0 +1,8 @@
+---
+import CharacterView from '../../views/CharacterView.astro';
+import { characterPaths } from '../../lib/static-paths';
+
+export const getStaticPaths = characterPaths;
+---
+
+<CharacterView slug={Astro.params.slug ?? ''} />

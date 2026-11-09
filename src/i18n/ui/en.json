@@ -1,0 +1,193 @@
+{
+  "meta": {
+    "siteName": "Ink Atlas",
+    "homeTitle": "Ink Atlas — a catalog of manhwa characters",
+    "defaultDescription": "A catalog of manhwa characters: works, portraits, short bios, and tags. A static example collection.",
+    "titleTemplate": "{title} · {site}",
+    "defaultOgAlt": "Ink Atlas mark",
+    "charactersDescription": "Every character in the catalog. Tags narrow the list in the browser and, without JavaScript, open their own pages.",
+    "worksDescription": "The works the catalog's characters belong to.",
+    "tagsDescription": "Tag categories: hair color, eye color, role, title, and any others you add.",
+    "submitDescription": "Suggest a work or a character for the catalog.",
+    "thanksDescription": "Your suggestion was sent."
+  },
+  "nav": {
+    "main": "Primary",
+    "home": "Home",
+    "characters": "Characters",
+    "works": "Works",
+    "tags": "Tags",
+    "submit": "Suggest"
+  },
+  "lang": {
+    "switcher": "Language",
+    "ru": "Русский",
+    "en": "English"
+  },
+  "theme": {
+    "toDark": "Switch to dark theme",
+    "toLight": "Switch to light theme"
+  },
+  "skip": "Skip to content",
+  "crumbs": { "label": "Breadcrumbs", "home": "Home" },
+  "footer": {
+    "lead": "A static catalog. Pages are built from Markdown, so edits do not need a database.",
+    "demo": "The catalog currently holds demo data: fictional works and locally drawn placeholders, not panels from real manhwa.",
+    "owner": "Kept by {author}.",
+    "submit": "Suggest a character",
+    "tags": "Tag directory"
+  },
+  "home": {
+    "kicker": "Storefront",
+    "lede": "Manhwa characters, laid out like a shop catalog: portrait, series, and tags. Search by name and narrow the grid with filters.",
+    "ctaCharacters": "Browse characters",
+    "ctaWorks": "Browse works",
+    "demoTitle": "These entries are examples",
+    "demoBody": "The names, plots, and portraits were invented for this template. Delete them and replace the files in src/content with your own.",
+    "featured": "Featured",
+    "featuredLead": "Characters marked as featured in their files.",
+    "recent": "Recently added",
+    "recentLead": "Who arrived in the catalog after the others.",
+    "works": "Works",
+    "worksLead": "The stories the characters belong to.",
+    "allCharacters": "All characters",
+    "allWorks": "All works",
+    "emptyFeatured": "Nobody is marked as featured yet.",
+    "emptyRecent": "No characters beyond the featured set."
+  },
+  "characters": {
+    "title": "Characters",
+    "lead": "Everyone in the catalog. Choose a tag to narrow the list. Without JavaScript, a tag opens its own page.",
+    "empty": "The catalog has no characters yet."
+  },
+  "works": {
+    "title": "Works",
+    "lead": "Each card opens the story and the characters who belong to it.",
+    "empty": "There are no works yet."
+  },
+  "work": {
+    "original": "Original title",
+    "altTitles": "Other titles",
+    "year": "Year",
+    "author": "Author",
+    "status": "Status",
+    "characters": "Characters",
+    "empty": "This work has no characters yet.",
+    "count": "Characters in this work: {n}."
+  },
+  "character": {
+    "portraitAlt": "Portrait of {name}, placeholder illustration",
+    "coverAlt": "Cover of {title}, placeholder illustration",
+    "tags": "Tags",
+    "about": "About",
+    "noBio": "No biography yet.",
+    "noTags": "No tags yet.",
+    "also": "Others in this work",
+    "added": "In the catalog since {date}",
+    "from": "From"
+  },
+  "status": {
+    "ongoing": "Ongoing",
+    "completed": "Completed",
+    "hiatus": "Hiatus"
+  },
+  "tags": {
+    "title": "Tags",
+    "lead": "Categories live in one file. Add a category or a value without touching the layout.",
+    "allValues": "All values",
+    "inCategory": "Characters with this category",
+    "empty": "Nobody matches yet.",
+    "valueTitle": "{category}: {value}",
+    "categoryLead": "Values in “{category}”.",
+    "valueLead": "Characters tagged “{value}” under “{category}”.",
+    "unused": "Not used yet"
+  },
+  "filters": {
+    "heading": "Filter",
+    "status": "Showing {shown} of {total}",
+    "empty": "No one matches these tags.",
+    "clear": "Clear",
+    "noscript": "Without JavaScript this list stays complete. Open a tag in the directory to see only the matches.",
+    "show": "Filters",
+    "hide": "Hide filters"
+  },
+  "search": {
+    "label": "Search",
+    "placeholder": "Character name or series",
+    "submit": "Search"
+  },
+  "sort": {
+    "label": "Sort",
+    "featured": "Featured",
+    "newest": "Newest",
+    "nameAsc": "Name A–Z",
+    "nameDesc": "Name Z–A"
+  },
+  "fallback": {
+    "notice": "Some of this text is not translated yet and is shown in Russian."
+  },
+  "counts": {
+    "characters": {
+      "one": "{n} character",
+      "few": "{n} characters",
+      "many": "{n} characters",
+      "other": "{n} characters"
+    },
+    "works": {
+      "one": "{n} work",
+      "few": "{n} works",
+      "many": "{n} works",
+      "other": "{n} works"
+    }
+  },
+  "form": {
+    "title": "Suggest an entry",
+    "lead": "Sending this form does not publish a page. It reaches the catalog owner, who adds a Markdown file.",
+    "kindLegend": "What to add",
+    "kindCharacter": "A character",
+    "kindWork": "A work",
+    "workTitle": "Work title",
+    "characterName": "Character name",
+    "characterHint": "Required if you are suggesting a character.",
+    "source": "Source link",
+    "sourceHint": "The manhwa page, chapter, or post the details come from.",
+    "image": "Image link",
+    "optional": "optional",
+    "tags": "Suggested tags",
+    "tagsHint": "For example: hair color — silver; title — knight.",
+    "comments": "Comment",
+    "email": "Contact email",
+    "emailHint": "Only needed if you want a reply.",
+    "submit": "Send suggestion",
+    "honeypot": "Leave this field empty",
+    "summary": "Check the form. Some fields need attention.",
+    "netlifyNote": "The form is marked up for Netlify Forms: on Netlify, submissions show up in the site dashboard. For GitHub Pages or Cloudflare, set a Formspree or Web3Forms URL — the README explains how.",
+    "formspreeNote": "The suggestion is sent through Formspree.",
+    "web3formsNote": "The suggestion is sent through Web3Forms.",
+    "web3formsMissing": "Web3Forms is selected, but the access key is missing. Add it in site.config.json or PUBLIC_WEB3FORMS_ACCESS_KEY, or the form cannot be delivered.",
+    "customNote": "The suggestion is sent to the address in the site settings.",
+    "thanksTitle": "Suggestion sent",
+    "thanksBody": "If you left an email, a reply will come there. A character page appears in the catalog only after someone adds it to the files by hand.",
+    "thanksHome": "Back home",
+    "thanksAgain": "Send another",
+    "sending": "Sending…",
+    "success": "Suggestion sent. It will not publish a page by itself — someone adds it to the catalog by hand.",
+    "error": "Could not send. Check the fields or try again.",
+    "notConfigured": "The form endpoint is not set yet. Add PUBLIC_FORM_ENDPOINT — the README explains how.",
+    "rateLimit": "Too many suggestions in a row. Wait a moment and try again.",
+    "turnstile": "Confirm you are not a robot, then send again."
+  },
+  "validation": {
+    "valueMissing": "Fill in this field.",
+    "email": "Enter an email like name@example.com.",
+    "url": "Enter a full link starting with https://.",
+    "tooShort": "That value is too short.",
+    "tooLong": "That value is too long."
+  },
+  "notFound": {
+    "title": "No page here",
+    "body": "The link is out of date, or the address has a typo. The catalog is still here — go back to the characters or the home page.",
+    "home": "Back home",
+    "characters": "Browse characters"
+  }
+}

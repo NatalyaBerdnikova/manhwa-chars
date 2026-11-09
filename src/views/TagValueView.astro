@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CharacterCard from '../components/CharacterCard.astro';
+import BiText from '../components/BiText.astro';
+import { documentTitle, pick, t } from '../i18n';
+import { categoryById, valueById } from '../data/tags';
+import { getCatalog } from '../lib/catalog';
+import { breadcrumbLd } from '../lib/seo';
+import { excerpt } from '../lib/text';
+
+interface Props {
+  category: string;
+  value: string;
+}
+
+const { category: categoryId, value: valueId } = Astro.props;
+const category = categoryById(categoryId);
+const value = valueById(categoryId, valueId);
+if (!category || !value) throw new Error(`Unknown tag ${categoryId}/${valueId}.`);
+const { characters, worksById } = await getCatalog();
+const categoryLabel = pick(category.label, 'ru');
+const categoryLabelEn = pick(category.label, 'en');
+const valueLabel = pick(value.label, 'ru');
+const valueLabelEn = pick(value.label, 'en');
+const heading = t('ru', 'tags.valueTitle', { category: categoryLabel.text, value: valueLabel.text });
+const headingEn = t('en', 'tags.valueTitle', { category: categoryLabelEn.text, value: valueLabelEn.text });
+const description = t('ru', 'tags.valueLead', { category: categoryLabel.text, value: valueLabel.text });
+const descriptionEn = t('en', 'tags.valueLead', { category: categoryLabelEn.text, value: valueLabelEn.text });
+const matches = characters
+  .filter((character) => (character.data.tags ?? {})[category.id] === value.id)
+  .sort((a, b) => pick(a.data.name, 'ru').text.localeCompare(pick(b.data.name, 'ru').text, 'ru'));
+const crumbs = [
+  { ru: t('ru', 'crumbs.home'), en: t('en', 'crumbs.home'), path: '' },
+  { ru: t('ru', 'tags.title'), en: t('en', 'tags.title'), path: 'tags' },
+  { ru: categoryLabel.text, en: categoryLabelEn.text, path: `tags/${category.id}` },
+  { ru: valueLabel.text, en: valueLabelEn.text, path: `tags/${category.id}/${value.id}` },
+];
+---
+
+<BaseLayout
+  routePath={`tags/${category.id}/${value.id}`}
+  titleRu={documentTitle('ru', heading)}
+  titleEn={documentTitle('en', headingEn)}
+  descriptionRu={excerpt(description)}
+  descriptionEn={excerpt(descriptionEn)}
+  imageAltRu={t('ru', 'meta.defaultOgAlt')}
+  jsonLd={[breadcrumbLd(crumbs)]}
+>
+  <div class="wrap page">
+    <Breadcrumbs crumbs={crumbs} />
+    <h1><BiText ru={heading} en={headingEn} /></h1>
+    <p class="lede" data-i18n="ru">{description}</p>
+    <p class="lede" data-i18n="en">{descriptionEn}</p>
+    {
+      matches.length === 0 ? (
+        <p class="empty"><span data-i18n="ru">{t('ru', 'tags.empty')}</span><span data-i18n="en">{t('en', 'tags.empty')}</span></p>
+      ) : (
+        <ul class="grid section">
+          {matches.map((character) => {
+            const work = worksById.get(character.data.work);
+            if (!work) return null;
+            return (
+              <li>
+                <CharacterCard character={character} work={work} level="h3" />
+              </li>
+            );
+          })}
+        </ul>
+      )
+    }
+  </div>
+</BaseLayout>

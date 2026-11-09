@@ -1,0 +1,67 @@
+{
+  "categories": [
+    {
+      "id": "hair",
+      "label": { "ru": "Цвет волос", "en": "Hair color" },
+      "description": {
+        "ru": "Преобладающий цвет волос.",
+        "en": "The character's main hair color."
+      },
+      "values": [
+        { "id": "black", "label": { "ru": "Чёрный", "en": "Black" } },
+        { "id": "silver", "label": { "ru": "Серебряный", "en": "Silver" } },
+        { "id": "brown", "label": { "ru": "Каштановый", "en": "Brown" } },
+        { "id": "dark-brown", "label": { "ru": "Тёмно-каштановый", "en": "Dark brown" } },
+        { "id": "white", "label": { "ru": "Белый", "en": "White" } },
+        { "id": "auburn", "label": { "ru": "Рыжий", "en": "Auburn" } }
+      ]
+    },
+    {
+      "id": "eyes",
+      "label": { "ru": "Цвет глаз", "en": "Eye color" },
+      "description": {
+        "ru": "Цвет радужки.",
+        "en": "Iris color."
+      },
+      "values": [
+        { "id": "grey", "label": { "ru": "Серый", "en": "Grey" } },
+        { "id": "amber", "label": { "ru": "Янтарный", "en": "Amber" } },
+        { "id": "green", "label": { "ru": "Зелёный", "en": "Green" } },
+        { "id": "red", "label": { "ru": "Красный", "en": "Red" } },
+        { "id": "gold", "label": { "ru": "Золотой", "en": "Gold" } },
+        { "id": "blue", "label": { "ru": "Синий", "en": "Blue" } },
+        { "id": "violet", "label": { "ru": "Фиолетовый", "en": "Violet" } }
+      ]
+    },
+    {
+      "id": "role",
+      "label": { "ru": "Роль", "en": "Role" },
+      "description": {
+        "ru": "Место персонажа в истории.",
+        "en": "Where the character sits in the story."
+      },
+      "values": [
+        { "id": "protagonist", "label": { "ru": "Главный герой", "en": "Protagonist" } },
+        { "id": "supporting", "label": { "ru": "Второстепенный", "en": "Supporting" } },
+        { "id": "antagonist", "label": { "ru": "Антагонист", "en": "Antagonist" } }
+      ]
+    },
+    {
+      "id": "title",
+      "label": { "ru": "Титул", "en": "Title" },
+      "description": {
+        "ru": "Звание, положение или прозвище.",
+        "en": "A rank, position, or epithet."
+      },
+      "values": [
+        { "id": "knight", "label": { "ru": "Рыцарь", "en": "Knight" } },
+        { "id": "heir", "label": { "ru": "Наследник", "en": "Heir" } },
+        { "id": "healer", "label": { "ru": "Целитель", "en": "Healer" } },
+        { "id": "cursed", "label": { "ru": "Проклятый", "en": "Cursed" } },
+        { "id": "queen", "label": { "ru": "Королева", "en": "Queen" } },
+        { "id": "spy", "label": { "ru": "Лазутчик", "en": "Spy" } },
+        { "id": "exile", "label": { "ru": "Изгнанник", "en": "Exile" } }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "url": "https://example.com",
+  "base": "/",
+  "defaultLocale": "ru",
+  "locales": ["ru", "en"],
+  "formEndpoint": "",
+  "turnstileSiteKey": "",
+  "author": "Наталья"
+}

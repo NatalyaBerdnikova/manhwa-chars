@@ -1,0 +1,11 @@
+---
+interface Props {
+  ru: string;
+  en?: string;
+}
+
+const ru = Astro.props.ru;
+const en = Astro.props.en?.trim() || ru;
+---
+
+<span data-i18n="ru">{ru}</span><span data-i18n="en">{en}</span>

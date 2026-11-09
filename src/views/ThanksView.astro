@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import UiText from '../components/UiText.astro';
+import { documentTitle, t } from '../i18n';
+import { href } from '../lib/urls';
+
+const crumbs = [
+  { ru: t('ru', 'crumbs.home'), en: t('en', 'crumbs.home'), path: '' },
+  { ru: t('ru', 'form.title'), en: t('en', 'form.title'), path: 'submit' },
+  { ru: t('ru', 'form.thanksTitle'), en: t('en', 'form.thanksTitle'), path: 'submit/thanks' },
+];
+---
+
+<BaseLayout
+  routePath="submit/thanks"
+  titleRu={documentTitle('ru', t('ru', 'form.thanksTitle'))}
+  titleEn={documentTitle('en', t('en', 'form.thanksTitle'))}
+  descriptionRu={t('ru', 'meta.thanksDescription')}
+  descriptionEn={t('en', 'meta.thanksDescription')}
+  imageAltRu={t('ru', 'meta.defaultOgAlt')}
+  noindex
+>
+  <div class="wrap page">
+    <Breadcrumbs crumbs={crumbs} />
+    <h1><UiText k="form.thanksTitle" /></h1>
+    <p class="lede"><UiText k="form.thanksBody" /></p>
+    <div class="actions">
+      <a class="button" href={href()}><UiText k="form.thanksHome" /></a>
+      <a class="button secondary" href={href('submit')}><UiText k="form.thanksAgain" /></a>
+    </div>
+  </div>
+</BaseLayout>
