@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import BiText from '../components/BiText.astro';
+import UiText from '../components/UiText.astro';
+import { documentTitle, pick, t } from '../i18n';
+import { tagCategories } from '../data/tags';
+import { getCatalog } from '../lib/catalog';
+import { breadcrumbLd } from '../lib/seo';
+import { href } from '../lib/urls';
+
+const { characters } = await getCatalog();
+const crumbs = [
+  { ru: t('ru', 'crumbs.home'), en: t('en', 'crumbs.home'), path: '' },
+  { ru: t('ru', 'tags.title'), en: t('en', 'tags.title'), path: 'tags' },
+];
+
+function count(categoryId: string, valueId: string): number {
+  return characters.filter((character) => (character.data.tags ?? {})[categoryId] === valueId).length;
+}
+---
+
+<BaseLayout
+  routePath="tags"
+  titleRu={documentTitle('ru', t('ru', 'tags.title'))}
+  titleEn={documentTitle('en', t('en', 'tags.title'))}
+  descriptionRu={t('ru', 'meta.tagsDescription')}
+  descriptionEn={t('en', 'meta.tagsDescription')}
+  imageAltRu={t('ru', 'meta.defaultOgAlt')}
+  jsonLd={[breadcrumbLd(crumbs)]}
+>
+  <div class="wrap page">
+    <Breadcrumbs crumbs={crumbs} />
+    <h1><UiText k="tags.title" /></h1>
+    <p class="lede"><UiText k="tags.lead" /></p>
+    {
+      tagCategories.map((category) => (
+        <section class="section">
+          <h2>
+            <a href={href(`tags/${category.id}`)}>
+              <BiText ru={category.label.ru} en={category.label.en} />
+            </a>
+          </h2>
+          {category.description && (
+            <p class="fine">
+              <BiText ru={pick(category.description, 'ru').text} en={pick(category.description, 'en').text} />
+            </p>
+          )}
+          <ul class="chip-row" style="margin-top: 0.7rem;">
+            {category.values.map((value) => (
+              <li>
+                <a class="chip" href={href(`tags/${category.id}/${value.id}`)}>
+                  <BiText ru={value.label.ru} en={value.label.en} />
+                  <span>{count(category.id, value.id)}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>

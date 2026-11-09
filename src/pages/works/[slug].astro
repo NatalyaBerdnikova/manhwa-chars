@@ -1,0 +1,8 @@
+---
+import WorkView from '../../views/WorkView.astro';
+import { workPaths } from '../../lib/static-paths';
+
+export const getStaticPaths = workPaths;
+---
+
+<WorkView slug={Astro.params.slug ?? ''} />

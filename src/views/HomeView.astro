@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CharacterCard from '../components/CharacterCard.astro';
+import WorkCard from '../components/WorkCard.astro';
+import UiText from '../components/UiText.astro';
+import { documentTitle, plural, t } from '../i18n';
+import { getCatalog } from '../lib/catalog';
+import { byAddedDesc } from '../lib/text';
+import { abs, href } from '../lib/urls';
+
+const { works, characters, worksById, charactersByWork } = await getCatalog();
+const featured = characters.filter((character) => character.data.featured).sort(byAddedDesc);
+const featuredIds = new Set(featured.map((character) => character.id));
+const recent = characters.filter((character) => !featuredIds.has(character.id)).sort(byAddedDesc).slice(0, 4);
+const orderedWorks = [...works].sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
+---
+
+<BaseLayout
+  routePath=""
+  titleRu={documentTitle('ru')}
+  titleEn={documentTitle('en')}
+  descriptionRu={t('ru', 'meta.defaultDescription')}
+  descriptionEn={t('en', 'meta.defaultDescription')}
+  imageAltRu={t('ru', 'meta.defaultOgAlt')}
+  imageAltEn={t('en', 'meta.defaultOgAlt')}
+  jsonLd={[
+    {
+      '@type': 'WebSite',
+      name: t('ru', 'meta.siteName'),
+      alternateName: t('en', 'meta.siteName'),
+      url: abs(),
+      description: t('ru', 'meta.defaultDescription'),
+      inLanguage: 'ru',
+    },
+  ]}
+>
+  <div class="wrap page">
+    <p class="kicker"><UiText k="home.kicker" /></p>
+    <h1><UiText k="meta.siteName" /></h1>
+    <p class="lede"><UiText k="home.lede" /></p>
+    <div class="actions">
+      <a class="button" href={href('characters')}><UiText k="home.ctaCharacters" /></a>
+      <a class="button secondary" href={href('works')}><UiText k="home.ctaWorks" /></a>
+    </div>
+
+    <aside class="note section">
+      <h2><UiText k="home.demoTitle" /></h2>
+      <p><UiText k="home.demoBody" /></p>
+    </aside>
+
+    <section class="section" aria-labelledby="featured-title">
+      <div class="section-head">
+        <div>
+          <h2 id="featured-title"><UiText k="home.featured" /></h2>
+          <p><UiText k="home.featuredLead" /></p>
+        </div>
+        <a href={href('characters')}><UiText k="home.allCharacters" /></a>
+      </div>
+      <ul class="grid">
+        {
+          featured.map((character, index) => {
+            const work = worksById.get(character.data.work);
+            if (!work) return null;
+            return (
+              <li>
+                <CharacterCard character={character} work={work} level="h3" priority={index === 0} />
+              </li>
+            );
+          })
+        }
+      </ul>
+    </section>
+
+    {
+      recent.length > 0 && (
+        <section class="section" aria-labelledby="recent-title">
+          <div class="section-head">
+            <div>
+              <h2 id="recent-title"><UiText k="home.recent" /></h2>
+              <p><UiText k="home.recentLead" /></p>
+            </div>
+          </div>
+          <ul class="grid">
+            {recent.map((character) => {
+              const work = worksById.get(character.data.work);
+              if (!work) return null;
+              return (
+                <li>
+                  <CharacterCard character={character} work={work} level="h3" />
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )
+    }
+
+    <section class="section" aria-labelledby="works-title">
+      <div class="section-head">
+        <div>
+          <h2 id="works-title"><UiText k="home.works" /></h2>
+          <p>
+            <span data-i18n="ru">{plural('ru', 'counts.works', orderedWorks.length)}</span><span data-i18n="en">{plural('en', 'counts.works', orderedWorks.length)}</span>
+          </p>
+        </div>
+        <a href={href('works')}><UiText k="home.allWorks" /></a>
+      </div>
+      <ul class="grid">
+        {
+          orderedWorks.map((work) => (
+            <li>
+              <WorkCard work={work} level="h3" count={charactersByWork.get(work.id)?.length ?? 0} />
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
+</BaseLayout>

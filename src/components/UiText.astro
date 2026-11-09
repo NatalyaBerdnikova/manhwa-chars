@@ -1,0 +1,13 @@
+---
+import { t } from '../i18n';
+import BiText from './BiText.astro';
+
+interface Props {
+  k: string;
+  vars?: Record<string, string | number>;
+}
+
+const { k, vars } = Astro.props;
+---
+
+<BiText ru={t('ru', k, vars)} en={t('en', k, vars)} />

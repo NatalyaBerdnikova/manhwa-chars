@@ -1,0 +1,35 @@
+---
+import { href } from '../lib/urls';
+import type { Crumb } from '../lib/seo';
+import BiText from './BiText.astro';
+import { t } from '../i18n';
+
+interface Props {
+  crumbs: Crumb[];
+}
+
+const { crumbs } = Astro.props;
+---
+
+<nav class="crumbs" aria-label={t('ru', 'crumbs.label')} data-aria-ru={t('ru', 'crumbs.label')} data-aria-en={t('en', 'crumbs.label')}>
+  <ol>
+    {
+      crumbs.map((crumb, index) => {
+        const last = index === crumbs.length - 1;
+        return (
+          <li>
+            {last ? (
+              <span aria-current="page">
+                <BiText ru={crumb.ru} en={crumb.en} />
+              </span>
+            ) : (
+              <a href={href(crumb.path)}>
+                <BiText ru={crumb.ru} en={crumb.en} />
+              </a>
+            )}
+          </li>
+        );
+      })
+    }
+  </ol>
+</nav>

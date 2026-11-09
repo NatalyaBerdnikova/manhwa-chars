@@ -1,0 +1,128 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CatalogImage from '../components/CatalogImage.astro';
+import CharacterCard from '../components/CharacterCard.astro';
+import BiText from '../components/BiText.astro';
+import UiText from '../components/UiText.astro';
+import { documentTitle, pick, plural, t } from '../i18n';
+import { getCatalog } from '../lib/catalog';
+import { localizedMarkdown } from '../lib/markdown';
+import { absoluteUrl, breadcrumbLd, socialImage } from '../lib/seo';
+import { excerpt } from '../lib/text';
+import { abs } from '../lib/urls';
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const { worksById, charactersByWork } = await getCatalog();
+const work = worksById.get(slug);
+if (!work) throw new Error(`Missing work "${slug}".`);
+const title = pick(work.data.title, 'ru');
+const titleEn = pick(work.data.title, 'en');
+const description = pick(work.data.description, 'ru');
+const descriptionEn = pick(work.data.description, 'en');
+const bodyRu = localizedMarkdown(work.body, 'ru');
+const bodyEn = localizedMarkdown(work.body, 'en');
+const fellBack = titleEn.fellBack || descriptionEn.fellBack || bodyEn.fellBack;
+const cast = [...(charactersByWork.get(work.id) ?? [])].sort((a, b) =>
+  pick(a.data.name, 'ru').text.localeCompare(pick(b.data.name, 'ru').text, 'ru'),
+);
+const crumbs = [
+  { ru: t('ru', 'crumbs.home'), en: t('en', 'crumbs.home'), path: '' },
+  { ru: t('ru', 'works.title'), en: t('en', 'works.title'), path: 'works' },
+  { ru: title.text, en: titleEn.text, path: `works/${work.id}` },
+];
+const altRu = t('ru', 'character.coverAlt', { title: title.text });
+const altEn = t('en', 'character.coverAlt', { title: titleEn.text });
+const social = await socialImage(work.data.cover);
+---
+
+<BaseLayout
+  routePath={`works/${work.id}`}
+  titleRu={documentTitle('ru', title.text)}
+  titleEn={documentTitle('en', titleEn.text)}
+  descriptionRu={excerpt(description.text)}
+  descriptionEn={excerpt(descriptionEn.text)}
+  image={work.data.cover}
+  imageAltRu={altRu}
+  imageAltEn={altEn}
+  ogType="article"
+  jsonLd={[
+    breadcrumbLd(crumbs),
+    {
+      '@type': 'ComicSeries',
+      name: title.text,
+      alternateName: [titleEn.text, work.data.originalTitle, ...(work.data.altTitles ?? [])].filter(
+        (item) => item && item !== title.text,
+      ),
+      description: excerpt(description.text),
+      image: absoluteUrl(social.src, Astro.site),
+      url: abs(`works/${work.id}`),
+      inLanguage: 'ru',
+      ...(work.data.author ? { author: { '@type': 'Person', name: work.data.author } } : {}),
+      ...(work.data.year ? { datePublished: String(work.data.year) } : {}),
+    },
+  ]}
+>
+  <article class="wrap page">
+    <Breadcrumbs crumbs={crumbs} />
+    {fellBack && <p class="fallback" data-i18n="en" role="note">{t('en', 'fallback.notice')}</p>}
+    <section class="banner">
+      <div class="banner-media">
+        <CatalogImage src={work.data.cover} alt={altRu} sizes="(min-width: 800px) 440px, 100vw" priority />
+      </div>
+      <div class="banner-copy">
+        <h1><BiText ru={title.text} en={titleEn.text} /></h1>
+        {work.data.originalTitle && work.data.originalTitle !== title.text && (
+          <p class="fine">{work.data.originalTitle}</p>
+        )}
+        <p data-i18n="ru">{description.text}</p>
+        <p data-i18n="en">{descriptionEn.text}</p>
+        <div class="facts">
+          {work.data.year && <span class="badge">{work.data.year}</span>}
+          {work.data.author && <span class="badge">{work.data.author}</span>}
+          {
+            work.data.status && (
+              <span class="badge accent">
+                <BiText ru={t('ru', `status.${work.data.status}`)} en={t('en', `status.${work.data.status}`)} />
+              </span>
+            )
+          }
+          {
+            work.data.altTitles?.map((item) => (
+              <span class="badge">{item}</span>
+            ))
+          }
+        </div>
+        {bodyRu.html && <div class="prose" data-i18n="ru" set:html={bodyRu.html} />}
+        {bodyEn.html && <div class="prose" data-i18n="en" set:html={bodyEn.html} />}
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2><UiText k="work.characters" /></h2>
+          <p>
+            <span data-i18n="ru">{plural('ru', 'counts.characters', cast.length)}</span><span data-i18n="en">{plural('en', 'counts.characters', cast.length)}</span>
+          </p>
+        </div>
+      </div>
+      {
+        cast.length === 0 ? (
+          <p class="empty"><UiText k="work.empty" /></p>
+        ) : (
+          <ul class="grid">
+            {cast.map((character) => (
+              <li>
+                <CharacterCard character={character} work={work} level="h3" />
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </section>
+  </article>
+</BaseLayout>

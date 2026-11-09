@@ -1,0 +1,160 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CatalogImage from '../components/CatalogImage.astro';
+import CharacterCard from '../components/CharacterCard.astro';
+import BiText from '../components/BiText.astro';
+import UiText from '../components/UiText.astro';
+import { documentTitle, pick, t } from '../i18n';
+import { resolveTags } from '../data/tags';
+import { getCatalog } from '../lib/catalog';
+import { localizedMarkdown } from '../lib/markdown';
+import { absoluteUrl, breadcrumbLd, socialImage } from '../lib/seo';
+import { excerpt, formatDate } from '../lib/text';
+import { abs, href } from '../lib/urls';
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const catalog = await getCatalog();
+const character = catalog.characters.find((item) => item.id === slug);
+if (!character) throw new Error(`Missing character "${slug}".`);
+const work = catalog.worksById.get(character.data.work);
+if (!work) throw new Error(`Character "${slug}" has no public work.`);
+
+const name = pick(character.data.name, 'ru');
+const nameEn = pick(character.data.name, 'en');
+const workTitle = pick(work.data.title, 'ru');
+const workTitleEn = pick(work.data.title, 'en');
+const bio = character.data.bio ? pick(character.data.bio, 'ru') : undefined;
+const bioEn = character.data.bio ? pick(character.data.bio, 'en') : undefined;
+const bodyRu = localizedMarkdown(character.body, 'ru');
+const bodyEn = localizedMarkdown(character.body, 'en');
+const tags = resolveTags(character.data.tags, 'ru');
+const tagsEn = resolveTags(character.data.tags, 'en');
+const fellBack = Boolean(nameEn.fellBack || bioEn?.fellBack || bodyEn.fellBack);
+const description = excerpt(bio?.text || `${t('ru', 'character.noBio')} ${workTitle.text}`);
+const descriptionEn = excerpt(bioEn?.text || `${t('en', 'character.noBio')} ${workTitleEn.text}`);
+const crumbs = [
+  { ru: t('ru', 'crumbs.home'), en: t('en', 'crumbs.home'), path: '' },
+  { ru: t('ru', 'characters.title'), en: t('en', 'characters.title'), path: 'characters' },
+  { ru: name.text, en: nameEn.text, path: `characters/${character.id}` },
+];
+const pageUrl = abs(`characters/${character.id}`);
+const social = await socialImage(character.data.image);
+const others = catalog.charactersByWork.get(work.id)?.filter((item) => item.id !== character.id) ?? [];
+const altRu = t('ru', 'character.portraitAlt', { name: name.text });
+const altEn = t('en', 'character.portraitAlt', { name: nameEn.text });
+---
+
+<BaseLayout
+  routePath={`characters/${character.id}`}
+  titleRu={documentTitle('ru', `${name.text} — ${workTitle.text}`)}
+  titleEn={documentTitle('en', `${nameEn.text} — ${workTitleEn.text}`)}
+  descriptionRu={description}
+  descriptionEn={descriptionEn}
+  image={character.data.image}
+  imageAltRu={altRu}
+  imageAltEn={altEn}
+  ogType="profile"
+  jsonLd={[
+    breadcrumbLd(crumbs),
+    {
+      '@type': 'Person',
+      name: name.text,
+      alternateName: nameEn.text === name.text ? undefined : nameEn.text,
+      description,
+      image: absoluteUrl(social.src, Astro.site),
+      url: pageUrl,
+      inLanguage: 'ru',
+      mainEntityOfPage: pageUrl,
+      subjectOf: {
+        '@type': 'ComicSeries',
+        name: workTitle.text,
+        url: abs(`works/${work.id}`),
+      },
+    },
+  ]}
+>
+  <article class="wrap page">
+    <Breadcrumbs crumbs={crumbs} />
+    {fellBack && <p class="fallback" data-i18n="en" role="note">{t('en', 'fallback.notice')}</p>}
+    <div class="profile">
+      <figure class="portrait">
+        <CatalogImage
+          src={character.data.image}
+          alt={altRu}
+          sizes="(min-width: 800px) 320px, 92vw"
+          priority
+        />
+        <figcaption class="fine">
+          <UiText k="character.from" />{' '}
+          <a href={href(`works/${work.id}`)}><BiText ru={workTitle.text} en={workTitleEn.text} /></a>
+        </figcaption>
+      </figure>
+      <div>
+        <h1><BiText ru={name.text} en={nameEn.text} /></h1>
+        <p class="lede">
+          <a href={href(`works/${work.id}`)}><BiText ru={workTitle.text} en={workTitleEn.text} /></a>
+        </p>
+        {
+          character.data.added && (
+            <p class="fine">
+              <BiText
+                ru={t('ru', 'character.added', { date: formatDate('ru', character.data.added) })}
+                en={t('en', 'character.added', { date: formatDate('en', character.data.added) })}
+              />
+            </p>
+          )
+        }
+        <section class="section">
+          <h2><UiText k="character.tags" /></h2>
+          {
+            tags.length === 0 ? (
+              <p class="empty"><UiText k="character.noTags" /></p>
+            ) : (
+              <div class="tag-groups">
+                {tags.map((tag, index) => (
+                  <div class="tag-row">
+                    <h3>
+                      <a href={href(`tags/${tag.categoryId}`)}>
+                        <BiText ru={tag.category.text} en={tagsEn[index]?.category.text || tag.category.text} />
+                      </a>
+                    </h3>
+                    <a class="chip" href={href(`tags/${tag.categoryId}/${tag.valueId}`)}>
+                      <BiText ru={tag.value.text} en={tagsEn[index]?.value.text || tag.value.text} />
+                    </a>
+                  </div>
+                ))}
+              </div>
+            )
+          }
+        </section>
+        <section class="section">
+          <h2><UiText k="character.about" /></h2>
+          {bio?.text && <p class="lede" data-i18n="ru">{bio.text}</p>}
+          {bioEn?.text && <p class="lede" data-i18n="en">{bioEn.text}</p>}
+          {bodyRu.html && <div class="prose" data-i18n="ru" set:html={bodyRu.html} />}
+          {bodyEn.html && <div class="prose" data-i18n="en" set:html={bodyEn.html} />}
+          {!bio?.text && !bodyRu.html && <p class="empty"><UiText k="character.noBio" /></p>}
+        </section>
+      </div>
+    </div>
+    {
+      others.length > 0 && (
+        <section class="section">
+          <h2><UiText k="character.also" /></h2>
+          <ul class="grid" style="margin-top: 0.9rem;">
+            {others.map((item) => (
+              <li>
+                <CharacterCard character={item} work={work} level="h3" />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </article>
+</BaseLayout>

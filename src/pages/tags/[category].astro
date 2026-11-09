@@ -1,0 +1,8 @@
+---
+import TagCategoryView from '../../views/TagCategoryView.astro';
+import { tagCategoryPaths } from '../../lib/static-paths';
+
+export const getStaticPaths = tagCategoryPaths;
+---
+
+<TagCategoryView category={Astro.params.category ?? ''} />

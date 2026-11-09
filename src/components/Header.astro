@@ -1,0 +1,100 @@
+---
+import { t } from '../i18n';
+import { tagCategories } from '../data/tags';
+import { href } from '../lib/urls';
+import BiText from './BiText.astro';
+
+interface Props {
+  routePath: string;
+}
+
+const { routePath } = Astro.props;
+const links = [
+  { id: 'characters', href: href('characters'), ru: t('ru', 'nav.characters'), en: t('en', 'nav.characters') },
+  { id: 'works', href: href('works'), ru: t('ru', 'nav.works'), en: t('en', 'nav.works') },
+  { id: 'tags', href: href('tags'), ru: t('ru', 'nav.tags'), en: t('en', 'nav.tags') },
+  { id: 'submit', href: href('submit'), ru: t('ru', 'nav.submit'), en: t('en', 'nav.submit') },
+];
+
+function current(id: string): boolean {
+  return routePath === id || routePath.startsWith(`${id}/`);
+}
+---
+
+<header class="site-header">
+  <div class="wrap header-top">
+    <a class="brand" href={href()}>
+      <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="8" fill="currentColor"></rect>
+        <path d="M8 20.5c3-6 6-8 8.2-8 2.2 0 3.4 1.5 4.8 3.4" fill="none" stroke="var(--bg)" stroke-width="1.8" stroke-linecap="round"></path>
+        <circle cx="22.5" cy="10" r="2.2" fill="var(--accent)"></circle>
+      </svg>
+      <BiText ru={t('ru', 'meta.siteName')} en={t('en', 'meta.siteName')} />
+    </a>
+    <form class="search" action={href('characters')} method="get" role="search">
+      <label class="visually-hidden" for="site-search">
+        <BiText ru={t('ru', 'search.label')} en={t('en', 'search.label')} />
+      </label>
+      <input
+        id="site-search"
+        type="search"
+        name="q"
+        placeholder={t('ru', 'search.placeholder')}
+        data-ph-ru={t('ru', 'search.placeholder')}
+        data-ph-en={t('en', 'search.placeholder')}
+        autocomplete="off"
+        enterkeyhint="search"
+      />
+      <button class="icon-button search-go" type="submit">
+        <BiText ru={t('ru', 'search.submit')} en={t('en', 'search.submit')} />
+      </button>
+    </form>
+    <script is:inline>
+      (function () {
+        var input = document.getElementById('site-search');
+        if (!input) return;
+        if (document.documentElement.getAttribute('data-lang') === 'en') {
+          input.placeholder = input.getAttribute('data-ph-en') || input.placeholder;
+        }
+        var params = new URLSearchParams(location.search);
+        if (params.get('q') && location.pathname.indexOf('/characters') !== -1) input.value = params.get('q');
+      })();
+    </script>
+    <div class="tools">
+      <div class="langs" role="group" aria-label={t('ru', 'lang.switcher')} data-aria-ru={t('ru', 'lang.switcher')} data-aria-en={t('en', 'lang.switcher')}>
+        <button type="button" data-set-lang="ru" lang="ru" aria-pressed="true">RU</button>
+        <button type="button" data-set-lang="en" lang="en" aria-pressed="false">EN</button>
+      </div>
+      <button
+        type="button"
+        class="theme-toggle"
+        id="theme-toggle"
+        data-label-dark-ru={t('ru', 'theme.toDark')}
+        data-label-dark-en={t('en', 'theme.toDark')}
+        data-label-light-ru={t('ru', 'theme.toLight')}
+        data-label-light-en={t('en', 'theme.toLight')}
+        aria-label={t('ru', 'theme.toDark')}
+      >
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path fill="currentColor" d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <nav class="wrap header-nav" aria-label={t('ru', 'nav.main')} data-aria-ru={t('ru', 'nav.main')} data-aria-en={t('en', 'nav.main')}>
+    {
+      links.map((link) => (
+        <a href={link.href} aria-current={current(link.id) ? 'page' : undefined}>
+          <BiText ru={link.ru} en={link.en} />
+        </a>
+      ))
+    }
+    {
+      tagCategories.map((category) => (
+        <a class="cat" href={href(`tags/${category.id}`)} aria-current={routePath === `tags/${category.id}` || routePath.startsWith(`tags/${category.id}/`) ? 'page' : undefined}>
+          <BiText ru={category.label.ru} en={category.label.en} />
+        </a>
+      ))
+    }
+  </nav>
+</header>

@@ -1,0 +1,47 @@
+---
+import { pick, t } from '../i18n';
+import type { WorkEntry } from '../lib/catalog';
+import { href } from '../lib/urls';
+import CatalogImage from './CatalogImage.astro';
+import BiText from './BiText.astro';
+
+interface Props {
+  work: WorkEntry;
+  level?: 'h2' | 'h3';
+  priority?: boolean;
+  count?: number;
+}
+
+const { work, level = 'h2', priority = false, count } = Astro.props;
+const title = pick(work.data.title, 'ru');
+const titleEn = pick(work.data.title, 'en');
+const page = href(`works/${work.id}`);
+const Heading = level;
+---
+
+<article class="card">
+  <a class="card-link" href={page}>
+    <div class="card-media">
+      <CatalogImage
+        src={work.data.cover}
+        alt=""
+        sizes="(min-width: 1100px) 240px, (min-width: 700px) 30vw, 46vw"
+        priority={priority}
+      />
+    </div>
+    <div class="card-body">
+      <Heading class="card-title"><BiText ru={title.text} en={titleEn.text} /></Heading>
+      <p class="card-meta">
+        {work.data.year ? <span class="badge">{work.data.year}</span> : null}
+        {
+          work.data.status && (
+            <span class="badge accent">
+              <BiText ru={t('ru', `status.${work.data.status}`)} en={t('en', `status.${work.data.status}`)} />
+            </span>
+          )
+        }
+        {typeof count === 'number' ? <span class="badge">{count}</span> : null}
+      </p>
+    </div>
+  </a>
+</article>
