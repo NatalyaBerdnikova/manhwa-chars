@@ -5,7 +5,7 @@ import CharacterCard from '../components/CharacterCard.astro';
 import UiText from '../components/UiText.astro';
 import BiText from '../components/BiText.astro';
 import { documentTitle, pick, plural, t } from '../i18n';
-import { tagCategories } from '../data/tags';
+import { resolveTags, tagCategories } from '../data/tags';
 import { getCatalog } from '../lib/catalog';
 import { breadcrumbLd } from '../lib/seo';
 
@@ -39,49 +39,68 @@ const filters = tagCategories
   imageAltRu={t('ru', 'meta.defaultOgAlt')}
   jsonLd={[breadcrumbLd(crumbs)]}
 >
-  <div class="wrap page" data-character-index>
+  <div class="wrap page" data-character-index data-page-size="24">
     <Breadcrumbs crumbs={crumbs} />
     <h1><UiText k="characters.title" /></h1>
-    <p class="lede"><UiText k="characters.lead" /></p>
-    <p class="lede"><noscript><UiText k="filters.noscript" /></noscript></p>
 
     <div class="catalog">
       <input class="filter-toggle" id="filter-open" type="checkbox" />
       <label class="filter-launch" for="filter-open"><UiText k="filters.show" /></label>
       <aside class="sidebar" aria-labelledby="filters-heading">
         <h2 id="filters-heading"><UiText k="filters.heading" /></h2>
-        <div class="filter-block">
-          <h3><UiText k="sort.label" /></h3>
-          <select id="catalog-sort" data-sort>
-            <option value="featured" data-ru={t('ru', 'sort.featured')} data-en={t('en', 'sort.featured')}>{t('ru', 'sort.featured')}</option>
-            <option value="newest" data-ru={t('ru', 'sort.newest')} data-en={t('en', 'sort.newest')}>{t('ru', 'sort.newest')}</option>
-            <option value="name" data-ru={t('ru', 'sort.nameAsc')} data-en={t('en', 'sort.nameAsc')}>{t('ru', 'sort.nameAsc')}</option>
-            <option value="name-desc" data-ru={t('ru', 'sort.nameDesc')} data-en={t('en', 'sort.nameDesc')}>{t('ru', 'sort.nameDesc')}</option>
-          </select>
-        </div>
         {
           filters.map((group) => (
-            <fieldset class="filter-block">
-              <legend>
-                <BiText ru={group.category.label.ru} en={group.category.label.en} />
-              </legend>
-              {group.values.map((item) => (
-                <label class="check">
-                  <input type="checkbox" data-filter={group.category.id} value={item.value.id} />
-                  <span>
-                    <BiText ru={item.value.label.ru} en={item.value.label.en} />
-                  </span>
-                  <span class="count">{item.count}</span>
-                </label>
-              ))}
-            </fieldset>
+            <div class="filter-block">
+              <button
+                type="button"
+                class="acc-toggle"
+                data-acc
+                aria-expanded="false"
+                aria-controls={`filter-${group.category.id}`}
+              >
+                <span>
+                  <BiText ru={group.category.label.ru} en={group.category.label.en} />
+                </span>
+                <svg class="acc-chevron" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                  <path d="M3.5 6 L8 10.5 L12.5 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </button>
+              <div
+                id={`filter-${group.category.id}`}
+                class:list={['filter-panel', group.values.length > 6 && 'is-scroll']}
+              >
+                {group.values.map((item) => (
+                  <label class="check">
+                    <input type="checkbox" data-filter={group.category.id} value={item.value.id} />
+                    <span>
+                      <BiText ru={item.value.label.ru} en={item.value.label.en} />
+                    </span>
+                    <span class="count">{item.count}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
           ))
         }
-        <p style="margin-top: 0.8rem;">
+        <p class="filter-clear">
           <button type="button" class="button secondary" data-filter-clear><UiText k="filters.clear" /></button>
         </p>
       </aside>
       <div>
+        <div class="catalog-search">
+          <label class="visually-hidden" for="catalog-search">
+            <BiText ru={t('ru', 'search.catalog')} en={t('en', 'search.catalog')} />
+          </label>
+          <input
+            id="catalog-search"
+            type="search"
+            placeholder={t('ru', 'search.catalog')}
+            data-ph-ru={t('ru', 'search.catalog')}
+            data-ph-en={t('en', 'search.catalog')}
+            autocomplete="off"
+            enterkeyhint="search"
+          />
+        </div>
         <div class="toolbar">
           <p class="filter-status" data-filter-status data-template-ru={t('ru', 'filters.status')} data-template-en={t('en', 'filters.status')}>
             <span data-i18n="ru">{plural('ru', 'counts.characters', sorted.length)}</span><span data-i18n="en">{plural('en', 'counts.characters', sorted.length)}</span>
@@ -96,9 +115,14 @@ const filters = tagCategories
               const tags = Object.entries(character.data.tags ?? {})
                 .map(([key, value]) => `${key}:${value}`)
                 .join(' ');
+              const labels = [
+                ...resolveTags(character.data.tags, 'ru').map((tag) => `${tag.category.text} ${tag.value.text}`),
+                ...resolveTags(character.data.tags, 'en').map((tag) => `${tag.category.text} ${tag.value.text}`),
+              ].join(' ');
               return (
                 <li
                   data-tags={tags}
+                  data-labels={labels}
                   data-name-ru={pick(character.data.name, 'ru').text}
                   data-name-en={pick(character.data.name, 'en').text}
                   data-work-ru={pick(work.data.title, 'ru').text}
@@ -112,6 +136,11 @@ const filters = tagCategories
             })
           }
         </ul>
+        <p class="catalog-more">
+          <button type="button" class="button secondary" data-show-more hidden>
+            <UiText k="catalog.more" />
+          </button>
+        </p>
       </div>
     </div>
   </div>

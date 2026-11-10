@@ -14,8 +14,8 @@ author: "А. Пример"
 status: "ongoing"
 ---
 
-Лиэн сторожит заставу, Кайрен ищет печать, а Юна записывает имена, которые туман ещё не забрал. Это учебный текст шаблона, не пересказ существующей манхвы.
+Лиэн сторожит заставу, Кайрен ищет печать, а Юна записывает имена, которые туман ещё не забрал. Это вымышленная история, не пересказ существующей манхвы.
 
 <!-- lang:en -->
 
-Lien keeps the outpost, Kayren looks for the seal, and Yuna writes down the names the fog has not taken yet. This is template copy, not a summary of an existing manhwa.
+Lien keeps the outpost, Kayren looks for the seal, and Yuna writes down the names the fog has not taken yet. This is a fictional story, not a summary of an existing manhwa.

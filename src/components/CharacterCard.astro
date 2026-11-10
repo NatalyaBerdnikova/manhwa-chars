@@ -1,7 +1,7 @@
 ---
 import { pick } from '../i18n';
 import type { CharacterEntry, WorkEntry } from '../lib/catalog';
-import { href } from '../lib/urls';
+import { characterFilterHref, href } from '../lib/urls';
 import { resolveTags } from '../data/tags';
 import CatalogImage from './CatalogImage.astro';
 import BiText from './BiText.astro';
@@ -55,6 +55,17 @@ const Heading = level;
       }
     </div>
     <Heading class="tile-name"><BiText ru={name.text} en={nameEn.text} /></Heading>
-    <p class="tile-line"><BiText ru={lineRu} en={lineEn} /></p>
+    {detail !== 'tags' && <p class="tile-line"><BiText ru={lineRu} en={lineEn} /></p>}
   </a>
+  {
+    detail === 'tags' && tags.length > 0 && (
+      <p class="tile-tags">
+        {tags.map((tag, index) => (
+          <a href={characterFilterHref(tag.categoryId, tag.valueId)}>
+            <BiText ru={tag.value.text} en={tagsEn[index]?.value.text || tag.value.text} />
+          </a>
+        ))}
+      </p>
+    )
+  }
 </article>

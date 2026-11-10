@@ -38,13 +38,26 @@ sliders.forEach((root) => {
     toggle.setAttribute('aria-pressed', paused ? 'true' : 'false');
   }
 
+  function offsetOf(slideIndex: number): number {
+    let delta = slideIndex - index;
+    const half = count / 2;
+    if (delta > half) delta -= count;
+    if (delta < -half) delta += count;
+    return delta;
+  }
+
   function update() {
     slides.forEach((slide, slideIndex) => {
-      const active = slideIndex === index;
-      slide.classList.toggle('is-active', active);
-      slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+      const delta = offsetOf(slideIndex);
+      slide.classList.toggle('is-active', delta === 0);
+      slide.classList.toggle('is-prev', delta === -1);
+      slide.classList.toggle('is-next', delta === 1);
+      slide.classList.toggle('is-far-prev', delta < -1);
+      slide.classList.toggle('is-far-next', delta > 1);
+      const visible = Math.abs(delta) <= 1;
+      slide.setAttribute('aria-hidden', visible ? 'false' : 'true');
       const link = slide.querySelector('a');
-      if (link) link.tabIndex = active ? 0 : -1;
+      if (link) link.tabIndex = delta === 0 ? 0 : -1;
     });
     if (current) current.textContent = String(index + 1).padStart(2, '0');
     if (status) {
@@ -70,23 +83,15 @@ sliders.forEach((root) => {
 
   function go(direction: 1 | -1) {
     if (count < 2 || moving) return;
-    const next = (index + direction + count) % count;
-    const incoming = slides[next];
-    const outgoing = slides[index];
-    const fromSide = direction > 0 ? 'is-right' : 'is-left';
-    const toSide = direction > 0 ? 'is-left' : 'is-right';
-    root.classList.add('is-instant');
-    incoming.classList.remove('is-active', 'is-left', 'is-right');
-    incoming.classList.add(fromSide);
-    void incoming.offsetWidth;
-    root.classList.remove('is-instant');
-    outgoing.classList.remove('is-active', 'is-left', 'is-right');
-    outgoing.classList.add(toSide);
-    incoming.classList.remove(fromSide);
-    incoming.classList.add('is-active');
-    index = next;
+    if (!motion.matches) {
+      root.classList.add('is-instant', 'is-flying');
+      void root.offsetWidth;
+      root.classList.remove('is-instant');
+    }
+    index = (index + direction + count) % count;
     update();
     moving = true;
+    window.setTimeout(() => root.classList.remove('is-flying'), motion.matches ? 0 : 40);
     window.setTimeout(() => {
       moving = false;
     }, motion.matches ? 0 : 780);
@@ -135,6 +140,7 @@ sliders.forEach((root) => {
     }
   });
 
+  viewport.addEventListener('dragstart', (event) => event.preventDefault());
   viewport.addEventListener('pointerdown', (event) => {
     if (event.button !== 0) return;
     const target = event.target;
@@ -193,7 +199,8 @@ sliders.forEach((root) => {
   observer.observe(root);
 
   if (count < 2) root.classList.add('is-single');
-  root.classList.add('is-ready');
+  root.classList.add('is-instant', 'is-ready');
   update();
+  window.requestAnimationFrame(() => root.classList.remove('is-instant'));
   start();
 });
