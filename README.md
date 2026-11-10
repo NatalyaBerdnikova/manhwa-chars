@@ -16,7 +16,7 @@ npm install
 npm run dev
 ```
 
-Сайт откроется на [http://127.0.0.1:4471](http://127.0.0.1:4471). `npm install` также ставит git-хук, который оптимизирует новые картинки перед коммитом.
+Сайт откроется на [http://127.0.0.1:4471/manhwa-chars/](http://127.0.0.1:4471/manhwa-chars/). Адрес с подпутём такой же, как на GitHub Pages: в `site.config.json` задан `base`. `npm install` также ставит git-хук, который оптимизирует новые картинки перед коммитом.
 
 ## Сборка
 
@@ -209,8 +209,8 @@ English paragraph.
 
 ```json
 {
-  "url": "https://example.com",
-  "base": "/"
+  "url": "https://natalyaberdnikova.github.io",
+  "base": "/manhwa-chars/"
 }
 ```
 
@@ -227,7 +227,7 @@ English paragraph.
 
 `SITE_URL` лучше оставлять доменом (`https://username.github.io`), а папку репозитория писать в `BASE_PATH`. Если в адресе уже есть путь, а `BASE_PATH` равен `/`, сборка предупредит: канонические ссылки могут потерять этот путь.
 
-Пока адрес равен `https://example.com`, сборка тоже предупреждает. Локально это нормально. Перед публикацией замените его.
+В файле уже стоит адрес этого репозитория: `https://natalyaberdnikova.github.io` и база `/manhwa-chars/`. Локальный `npm run dev` открывается по тому же подпути. Другой хостинг задаётся переменными `SITE_URL` и `BASE_PATH`, они перекрывают файл.
 
 ## Форма заявок и Telegram
 
@@ -235,7 +235,7 @@ English paragraph.
 
 С JavaScript форма уходит через `fetch`, успех и ошибка показываются на странице на текущем языке. Без JavaScript браузер делает обычный POST, и воркер отвечает короткой страницей «отправлено» / «не удалось» со ссылкой назад.
 
-Пока `formEndpoint` пустой, кнопка отправки выключена.
+В `site.config.json` уже указан развёрнутый приёмник `https://manhwa-chars-telegram.manhwa-chars.workers.dev`, поэтому кнопка отправки включена без дополнительных переменных. Пустой `formEndpoint` (и пустой `PUBLIC_FORM_ENDPOINT`) снова выключает кнопку.
 
 ### Как подключить бота
 
@@ -244,7 +244,7 @@ English paragraph.
 3. Добавьте бота в этот канал администратором с правом публиковать сообщения.
 4. Узнайте `chat_id`. Для канала это обычно число вида `-100…`. Практичный способ: напишите в канал любое сообщение, затем откройте в браузере `https://api.telegram.org/bot<ТОКЕН>/getUpdates` после того, как бот увидел апдейт (для канала иногда проще временно добавить бота в группу, написать `/start`, и взять `chat.id` из ответа). Идентификатор канала также виден в некоторых клиентах в ссылке вида `t.me/c/1234567890` — тогда chat id равен `-100` + эти цифры.
 5. Установите [Wrangler](https://developers.cloudflare.com/workers/wrangler/) и войдите в Cloudflare: `npx wrangler login`.
-6. В папке `telegram-relay/` поправьте `ALLOWED_ORIGIN` в `wrangler.toml` на адрес сайта без хвоста `/`, например `https://natalyaberdnikova.github.io`.
+6. В папке `telegram-relay/` поле `ALLOWED_ORIGIN` в `wrangler.toml` — адрес сайта без хвоста `/`. Сейчас это `https://natalyaberdnikova.github.io`.
 7. Задайте секреты и задеплойте:
 
 ```bash
@@ -255,7 +255,7 @@ npx wrangler secret put TELEGRAM_CHAT_ID
 npx wrangler deploy
 ```
 
-8. Wrangler напечатает адрес вида `https://manhwa-chars-telegram.<account>.workers.dev`. Впишите его в `formEndpoint` файла `site.config.json` или, на хостинге, в переменную `PUBLIC_FORM_ENDPOINT`. Пересоберите сайт.
+8. Wrangler печатает адрес воркера. Текущий уже вписан в `formEndpoint`: `https://manhwa-chars-telegram.manhwa-chars.workers.dev`. Другой адрес задаётся там же или переменной `PUBLIC_FORM_ENDPOINT`. После смены пересоберите сайт.
 9. Необязательно: заведите виджет [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/), сайт-ключ положите в `PUBLIC_TURNSTILE_SITE_KEY`, секрет — `npx wrangler secret put TURNSTILE_SECRET`. Если секрета нет, проверка капчи пропускается.
 
 Тот же контракт (POST JSON или обычной формы, ответ JSON при заголовке `Accept: application/json`) можно повторить функцией Netlify или Vercel. В репозитории готовый вариант — Worker.
@@ -297,14 +297,14 @@ npx wrangler deploy
 
 В настройках репозитория: Settings → Pages → Source: **GitHub Actions**.
 
-Если переменные не заданы, workflow подставляет адрес этого репозитория: `SITE_URL=https://natalyaberdnikova.github.io` и `BASE_PATH=/manhwa-chars/`.
+Если переменные не заданы, workflow подставляет адрес этого репозитория: `SITE_URL=https://natalyaberdnikova.github.io`, `BASE_PATH=/manhwa-chars/` и `PUBLIC_FORM_ENDPOINT=https://manhwa-chars-telegram.manhwa-chars.workers.dev`.
 
 Переменные репозитория (Settings → Secrets and variables → Actions → Variables) перекрывают эти значения:
 
 - сайт пользователя `username.github.io`: `SITE_URL=https://username.github.io`, `BASE_PATH=/`
 - сайт проекта: `SITE_URL=https://username.github.io`, `BASE_PATH=/имя-репозитория/`
 
-Адрес воркера задайте переменной `PUBLIC_FORM_ENDPOINT`. Сайт-ключ Turnstile, если он нужен, — `PUBLIC_TURNSTILE_SITE_KEY`. Токен бота на Pages не кладите: он живёт только в секретах Worker.
+Адрес воркера уже подставлен в workflow. Переменная `PUBLIC_FORM_ENDPOINT` нужна, только если приёмник другой. Сайт-ключ Turnstile, если он нужен, — `PUBLIC_TURNSTILE_SITE_KEY`. Токен бота на Pages не кладите: он живёт только в секретах Worker.
 
 ### Netlify
 
@@ -324,8 +324,7 @@ npx wrangler deploy
 
 ## Что настроить перед публикацией
 
-1. `url` в `site.config.json` или `SITE_URL` в CI — иначе канонические ссылки, Open Graph и sitemap укажут на `https://example.com`.
-2. `base` / `BASE_PATH`, если сайт открывается не с корня домена.
-3. Воркер Telegram: токен, chat id, `ALLOWED_ORIGIN`, деплой, затем `PUBLIC_FORM_ENDPOINT` на сайте.
-4. Заменить примеры в `src/content/` и картинки в `src/assets/source/` своими. Демонстрационные файлы подписаны в текстах и в подвале.
-5. При желании поправить имя в поле `author` файла `site.config.json`.
+1. `url` и `base` в `site.config.json` уже указывают на `https://natalyaberdnikova.github.io/manhwa-chars/`. Для другого адреса задайте `SITE_URL` и `BASE_PATH`.
+2. Воркер Telegram уже развёрнут, `formEndpoint` указывает на него. Секреты бота живут только в Worker. Для другого приёмника поменяйте `formEndpoint` или `PUBLIC_FORM_ENDPOINT`.
+3. Заменить примеры в `src/content/` и картинки в `src/assets/source/` своими. Демонстрационные файлы подписаны в текстах и в подвале.
+4. При желании поправить имя в поле `author` файла `site.config.json`.

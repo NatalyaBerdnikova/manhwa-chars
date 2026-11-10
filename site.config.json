@@ -1,9 +1,9 @@
 {
-  "url": "https://example.com",
-  "base": "/",
+  "url": "https://natalyaberdnikova.github.io",
+  "base": "/manhwa-chars/",
   "defaultLocale": "ru",
   "locales": ["ru", "en"],
-  "formEndpoint": "",
+  "formEndpoint": "https://manhwa-chars-telegram.manhwa-chars.workers.dev",
   "turnstileSiteKey": "",
   "author": "Наталья"
 }
