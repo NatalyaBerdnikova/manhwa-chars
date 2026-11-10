@@ -7,7 +7,7 @@ import { documentTitle, pick, t } from '../i18n';
 import { tagCategories } from '../data/tags';
 import { getCatalog } from '../lib/catalog';
 import { breadcrumbLd } from '../lib/seo';
-import { href } from '../lib/urls';
+import { characterFilterHref, href } from '../lib/urls';
 
 const { characters } = await getCatalog();
 const crumbs = [
@@ -49,7 +49,7 @@ function count(categoryId: string, valueId: string): number {
           <ul class="chip-row" style="margin-top: 0.7rem;">
             {category.values.map((value) => (
               <li>
-                <a class="chip" href={href(`tags/${category.id}/${value.id}`)}>
+                <a class="chip" href={characterFilterHref(category.id, value.id)}>
                   <BiText ru={value.label.ru} en={value.label.en} />
                   <span>{count(category.id, value.id)}</span>
                 </a>

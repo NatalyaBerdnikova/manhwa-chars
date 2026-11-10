@@ -140,6 +140,7 @@ sliders.forEach((root) => {
     }
   });
 
+  viewport.addEventListener('dragstart', (event) => event.preventDefault());
   viewport.addEventListener('pointerdown', (event) => {
     if (event.button !== 0) return;
     const target = event.target;

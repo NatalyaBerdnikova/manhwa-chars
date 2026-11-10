@@ -1,5 +1,5 @@
 ---
-import { pick, t } from '../i18n';
+import { pick, plural, t } from '../i18n';
 import type { WorkEntry } from '../lib/catalog';
 import { href } from '../lib/urls';
 import CatalogImage from './CatalogImage.astro';
@@ -19,29 +19,36 @@ const page = href(`works/${work.id}`);
 const Heading = level;
 ---
 
-<article class="card">
-  <a class="card-link" href={page}>
-    <div class="card-media">
-      <CatalogImage
-        src={work.data.cover}
-        alt=""
-        sizes="(min-width: 1100px) 240px, (min-width: 700px) 30vw, 46vw"
-        priority={priority}
-      />
+<article class="tile work-tile">
+  <a class="tile-link" href={page}>
+    <div class="tile-stage">
+      <div class="tile-shot">
+        <CatalogImage
+          src={work.data.cover}
+          alt=""
+          sizes="(min-width: 1100px) 240px, (min-width: 700px) 30vw, 46vw"
+          priority={priority}
+        />
+      </div>
     </div>
-    <div class="card-body">
-      <Heading class="card-title"><BiText ru={title.text} en={titleEn.text} /></Heading>
-      <p class="card-meta">
-        {work.data.year ? <span class="badge">{work.data.year}</span> : null}
-        {
-          work.data.status && (
-            <span class="badge accent">
-              <BiText ru={t('ru', `status.${work.data.status}`)} en={t('en', `status.${work.data.status}`)} />
-            </span>
-          )
-        }
-        {typeof count === 'number' ? <span class="badge">{count}</span> : null}
-      </p>
-    </div>
+    <Heading class="tile-name"><BiText ru={title.text} en={titleEn.text} /></Heading>
+    <p class="tile-meta">
+      {work.data.year ? <span class="badge">{work.data.year}</span> : null}
+      {
+        work.data.status && (
+          <span class="badge accent">
+            <BiText ru={t('ru', `status.${work.data.status}`)} en={t('en', `status.${work.data.status}`)} />
+          </span>
+        )
+      }
+      {
+        typeof count === 'number' ? (
+          <span class="badge">
+            <span data-i18n="ru">{plural('ru', 'counts.characters', count)}</span>
+            <span data-i18n="en">{plural('en', 'counts.characters', count)}</span>
+          </span>
+        ) : null
+      }
+    </p>
   </a>
 </article>

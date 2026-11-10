@@ -16,3 +16,10 @@ export function abs(routePath = ''): string {
   if (!site) return path;
   return new URL(path, site).href;
 }
+
+/** Catalog page with one characteristic already selected. */
+export function characterFilterHref(categoryId: string, valueId: string): string {
+  const params = new URLSearchParams();
+  params.set('tag', `${categoryId}:${valueId}`);
+  return `${href('characters')}?${params.toString()}`;
+}

@@ -72,7 +72,7 @@ const social = await socialImage(work.data.cover);
     <div class="wrap page work-top">
       <Breadcrumbs crumbs={crumbs} />
       {fellBack && <p class="fallback" data-i18n="en" role="note">{t('en', 'fallback.notice')}</p>}
-      <h1 class="work-title"><BiText ru={title.text} en={titleEn.text} /></h1>
+      <h1 class="work-title" data-parallax="0.05"><BiText ru={title.text} en={titleEn.text} /></h1>
       {work.data.originalTitle &&
         work.data.originalTitle !== title.text &&
         work.data.originalTitle !== titleEn.text && (
@@ -141,3 +141,7 @@ const social = await socialImage(work.data.cover);
     </div>
   </article>
 </BaseLayout>
+
+<script>
+  import '../scripts/parallax.ts';
+</script>

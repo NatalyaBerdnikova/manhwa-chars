@@ -2,21 +2,21 @@
   "meta": {
     "siteName": "Ink Atlas",
     "homeTitle": "Ink Atlas — a catalog of manhwa characters",
-    "defaultDescription": "A catalog of manhwa characters: works, portraits, short bios, and tags.",
+    "defaultDescription": "A catalog of manhwa characters: series, portraits, short bios, and characteristics.",
     "titleTemplate": "{title} · {site}",
     "defaultOgAlt": "Ink Atlas mark",
-    "charactersDescription": "Every character in the catalog. Tags narrow the list, and each tag also has its own page.",
-    "worksDescription": "The works the catalog's characters belong to.",
+    "charactersDescription": "Every character in the catalog. Characteristics narrow the list.",
+    "worksDescription": "The series the catalog's characters belong to.",
     "tagsDescription": "Browse characters by hair color, eye color, role, title, and more.",
-    "submitDescription": "Suggest a work or a character for the catalog.",
+    "submitDescription": "Suggest a series or a character for the catalog.",
     "thanksDescription": "Your suggestion was sent."
   },
   "nav": {
     "main": "Primary",
     "home": "Home",
     "characters": "Characters",
-    "works": "Works",
-    "tags": "Tags",
+    "works": "Series",
+    "tags": "Characteristics",
     "submit": "Suggest",
     "menu": "Menu",
     "close": "Close"
@@ -34,26 +34,26 @@
   "crumbs": { "label": "Breadcrumbs", "home": "Home" },
   "footer": {
     "lead": "A catalog of manhwa characters, gathered in one place.",
-    "demo": "The catalog currently holds demo data: fictional works and locally drawn placeholders, not panels from real manhwa.",
+    "demo": "The catalog currently holds demo data: fictional series and locally drawn placeholders, not panels from real manhwa.",
     "owner": "Kept by {author}.",
     "submit": "Suggest a character",
-    "tags": "Tag directory"
+    "tags": "Characteristics"
   },
   "home": {
     "kicker": "Storefront",
     "lede": "Manhwa characters, laid out like a shop catalog: portrait, series, and tags. Search by name and narrow the grid with filters.",
     "ctaCharacters": "Browse characters",
-    "ctaWorks": "Browse works",
+    "ctaWorks": "Browse series",
     "demoTitle": "These entries are examples",
     "demoBody": "The names, plots, and portraits here are invented examples, not panels from a real manhwa.",
     "featured": "Featured",
     "featuredLead": "Characters placed at the front of the catalog.",
     "recent": "Recently added",
     "recentLead": "Who arrived in the catalog after the others.",
-    "works": "Works",
+    "works": "Series",
     "worksLead": "The stories the characters belong to.",
     "allCharacters": "All characters",
-    "allWorks": "All works",
+    "allWorks": "All series",
     "emptyFeatured": "Nobody is marked as featured yet.",
     "emptyRecent": "No characters beyond the featured set."
   },
@@ -63,9 +63,9 @@
     "empty": "The catalog has no characters yet."
   },
   "works": {
-    "title": "Works",
+    "title": "Series",
     "lead": "Each card opens the story and the characters who belong to it.",
-    "empty": "There are no works yet."
+    "empty": "There are no series yet."
   },
   "work": {
     "original": "Original title",
@@ -74,8 +74,8 @@
     "author": "Author",
     "status": "Status",
     "characters": "Characters",
-    "empty": "This work has no characters yet.",
-    "count": "Characters in this work: {n}."
+    "empty": "This series has no characters yet.",
+    "count": "Characters in this series: {n}."
   },
   "character": {
     "portraitAlt": "Full-length figure of {name}, placeholder illustration",
@@ -83,11 +83,11 @@
     "scroll": "Scroll to discover",
     "piece": "{name} / {index}",
     "coverAlt": "Cover of {title}, placeholder illustration",
-    "tags": "Tags",
+    "tags": "Characteristics",
     "about": "About",
     "noBio": "No biography yet.",
-    "noTags": "No tags yet.",
-    "also": "Others in this work",
+    "noTags": "No characteristics yet.",
+    "also": "Others in this series",
     "added": "In the catalog since {date}",
     "from": "From"
   },
@@ -97,28 +97,32 @@
     "hiatus": "Hiatus"
   },
   "tags": {
-    "title": "Tags",
+    "title": "Characteristics",
     "lead": "Hair, eyes, roles, titles, and the other ways the catalog groups characters.",
     "allValues": "All values",
     "inCategory": "Characters with this category",
     "empty": "Nobody matches yet.",
     "valueTitle": "{category}: {value}",
     "categoryLead": "Values in “{category}”.",
-    "valueLead": "Characters tagged “{value}” under “{category}”.",
+    "valueLead": "Characters with “{value}” under “{category}”.",
     "unused": "Not used yet"
   },
   "filters": {
     "heading": "Filter",
     "status": "Showing {shown} of {total}",
-    "empty": "No one matches these tags.",
+    "empty": "No one matches these characteristics.",
     "clear": "Clear",
-    "noscript": "This page lists everyone. Open a tag in the directory to see only the matches.",
+    "noscript": "This page lists everyone. Open a characteristic in the directory to see only the matches.",
     "show": "Filters",
     "hide": "Hide filters"
+  },
+  "catalog": {
+    "more": "Show more"
   },
   "search": {
     "label": "Search",
     "placeholder": "Character name or series",
+    "catalog": "Name, series, or characteristic",
     "submit": "Search",
     "open": "Open search",
     "close": "Close search"
@@ -149,10 +153,10 @@
       "other": "{n} characters"
     },
     "works": {
-      "one": "{n} work",
-      "few": "{n} works",
-      "many": "{n} works",
-      "other": "{n} works"
+      "one": "{n} series",
+      "few": "{n} series",
+      "many": "{n} series",
+      "other": "{n} series"
     }
   },
   "form": {
@@ -160,15 +164,15 @@
     "lead": "Sending this form does not publish a page. It reaches the catalog owner, who adds the entry by hand.",
     "kindLegend": "What to add",
     "kindCharacter": "A character",
-    "kindWork": "A work",
-    "workTitle": "Work title",
+    "kindWork": "A series",
+    "workTitle": "Series title",
     "characterName": "Character name",
     "characterHint": "Required if you are suggesting a character.",
     "source": "Source link",
     "sourceHint": "The manhwa page, chapter, or post the details come from.",
     "image": "Image link",
     "optional": "optional",
-    "tags": "Suggested tags",
+    "tags": "Suggested characteristics",
     "tagsHint": "For example: hair color — silver; title — knight.",
     "comments": "Comment",
     "email": "Contact email",
