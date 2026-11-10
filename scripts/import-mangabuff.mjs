@@ -8,9 +8,10 @@
  * description, genres, cover, and characters[{name, slug, main, hover}].
  * source_url and the reading-folder name are never written into the site.
  *
- * A character is written only when the main image exists in --images or was
- * already copied into src/assets/library on a previous run. Re-run this after
- * adding another image batch; characters whose pictures are still missing stay out.
+ * A character is written only when both the main image and the hover image
+ * exist in --images or were already copied into src/assets/library. Re-run
+ * this after adding another image batch; characters still missing either
+ * picture stay out.
  */
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
@@ -310,11 +311,20 @@ async function main() {
 
   const ready = [];
   for (const character of candidates) {
+    const id = `${character.workSlug}-${character.slug}`;
     const mainSource = character.mainRef ? path.join(imagesDir, character.mainRef) : '';
-    const dest = path.join(libraryRoot, 'characters', `${character.workSlug}-${character.slug}.webp`);
-    const mainAvailable = (mainSource && (await exists(mainSource))) || (await exists(dest));
-    if (!mainAvailable) {
-      skipped.push({ kind: 'character', slug: `${character.workSlug}/${character.slug}`, reason: 'missing main image' });
+    const hoverSource = character.hoverRef ? path.join(imagesDir, character.hoverRef) : '';
+    const mainDest = path.join(libraryRoot, 'characters', `${id}.webp`);
+    const hoverDest = path.join(libraryRoot, 'characters', `${id}-alt.webp`);
+    const mainAvailable = (mainSource && (await exists(mainSource))) || (await exists(mainDest));
+    const hoverAvailable = (hoverSource && (await exists(hoverSource))) || (await exists(hoverDest));
+    if (!mainAvailable || !hoverAvailable) {
+      const reason = !mainAvailable && !hoverAvailable
+        ? 'missing main and hover images'
+        : !mainAvailable
+          ? 'missing main image'
+          : 'missing hover image';
+      skipped.push({ kind: 'character', slug: `${character.workSlug}/${character.slug}`, reason });
       continue;
     }
     ready.push(character);
@@ -353,20 +363,24 @@ async function main() {
     const mainSource = character.mainRef ? path.join(imagesDir, character.mainRef) : '';
     const hoverSource = character.hoverRef ? path.join(imagesDir, character.hoverRef) : '';
     const hasMain = await ensureFile(mainSource, mainDest);
-    if (!hasMain) {
-      skipped.push({ kind: 'character', slug: `${character.workSlug}/${character.slug}`, reason: 'missing main image' });
+    const hasHover = await ensureFile(hoverSource, hoverDest);
+    if (!hasMain || !hasHover) {
+      skipped.push({
+        kind: 'character',
+        slug: `${character.workSlug}/${character.slug}`,
+        reason: !hasMain ? 'missing main image' : 'missing hover image',
+      });
       continue;
     }
     if (mainSource && (await exists(mainSource))) copied += 1;
+    if (hoverSource && (await exists(hoverSource))) copied += 1;
     expected.add(`characters/${id}.webp`);
-    const hasHover = await ensureFile(hoverSource, hoverDest);
-    if (hoverSource && hasHover && (await exists(hoverSource))) copied += 1;
-    if (hasHover) expected.add(`characters/${id}-alt.webp`);
+    expected.add(`characters/${id}-alt.webp`);
     const doc = {
       ...character,
       id,
       image: `../../assets/library/characters/${id}.webp`,
-      hover: hasHover ? `../../assets/library/characters/${id}-alt.webp` : '',
+      hover: `../../assets/library/characters/${id}-alt.webp`,
     };
     await fs.writeFile(path.join(charactersDir, `${id}.md`), characterDocument(doc));
     writtenCharacters.push(doc);
