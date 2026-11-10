@@ -1157,7 +1157,7 @@ textarea[aria-invalid="true"] {
 
 .tile-shot {
   position: absolute;
-  inset: 5% 10% 0;
+  inset: 0;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -1217,6 +1217,18 @@ textarea[aria-invalid="true"] {
   text-decoration: underline;
 }
 
+.tile-genres {
+  margin: 0.35rem 0 0;
+  color: var(--faint);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  text-align: center;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .work-tile .tile-stage {
   overflow: hidden;
 }
@@ -1255,22 +1267,6 @@ textarea[aria-invalid="true"] {
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .tile-shot {
     transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.35s ease, filter 0.45s ease;
-  }
-
-  .tile:not(.work-tile):hover,
-  .tile:not(.work-tile):focus-within {
-    z-index: 4;
-  }
-
-  .tile:not(.work-tile):hover .tile-stage,
-  .tile:not(.work-tile):focus-within .tile-stage {
-    overflow: visible;
-  }
-
-  .tile:not(.work-tile):hover .tile-shot,
-  .tile:not(.work-tile):focus-within .tile-shot {
-    transform: translateY(-24%) scale(1.28);
-    filter: drop-shadow(0 22px 16px rgba(28, 20, 16, 0.22));
   }
 
   .work-tile:hover .tile-shot,
@@ -1536,6 +1532,28 @@ textarea[aria-invalid="true"] {
   -webkit-user-drag: none;
   user-select: none;
   pointer-events: none;
+}
+
+.tile:not(.work-tile) .tile-shot picture,
+.tile:not(.work-tile) .tile-shot img,
+.atelier-figure picture,
+.atelier-figure img,
+.cast-photo picture,
+.cast-photo img {
+  border-top-left-radius: 1.15rem;
+  border-top-right-radius: 1.15rem;
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent 0%, #000 13%),
+    radial-gradient(ellipse 34% 22% at 0 0, transparent 0%, #000 72%),
+    radial-gradient(ellipse 34% 22% at 100% 0, transparent 0%, #000 72%);
+  -webkit-mask-composite: source-in, source-in;
+  -webkit-mask-repeat: no-repeat;
+  mask-image:
+    linear-gradient(to bottom, transparent 0%, #000 13%),
+    radial-gradient(ellipse 34% 22% at 0 0, transparent 0%, #000 72%),
+    radial-gradient(ellipse 34% 22% at 100% 0, transparent 0%, #000 72%);
+  mask-composite: intersect, intersect;
+  mask-repeat: no-repeat;
 }
 
 .cast-shadow {

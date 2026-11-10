@@ -22,14 +22,18 @@ const Heading = level;
 <article class="tile work-tile">
   <a class="tile-link" href={page}>
     <div class="tile-stage">
-      <div class="tile-shot">
-        <CatalogImage
-          src={work.data.cover}
-          alt=""
-          sizes="(min-width: 1100px) 240px, (min-width: 700px) 30vw, 46vw"
-          priority={priority}
-        />
-      </div>
+      {
+        work.data.cover && (
+          <div class="tile-shot">
+            <CatalogImage
+              src={work.data.cover}
+              alt=""
+              sizes="(min-width: 1100px) 240px, (min-width: 700px) 30vw, 46vw"
+              priority={priority}
+            />
+          </div>
+        )
+      }
     </div>
     <Heading class="tile-name"><BiText ru={title.text} en={titleEn.text} /></Heading>
     <p class="tile-meta">
@@ -50,5 +54,10 @@ const Heading = level;
         ) : null
       }
     </p>
+    {
+      work.data.genres && work.data.genres.length > 0 && (
+        <p class="tile-genres">{work.data.genres.join(' · ')}</p>
+      )
+    }
   </a>
 </article>

@@ -25,3 +25,6 @@ pnpm-debug.log*
 # macOS / editors
 .DS_Store
 .idea/
+
+# Raw import batches. The script copies the pictures it can use into src/assets/library.
+data/mangabuff/images/

@@ -35,6 +35,7 @@ const firstName = first ? pick(first.data.name, 'ru').text : '';
           const name = pick(character.data.name, 'ru');
           const nameEn = pick(character.data.name, 'en');
           const alternate = character.data.hoverImage ?? character.data.imageAlt ?? character.data.image;
+          const defer = index > 1 && index < characters.length - 1;
           return (
             <li
               class:list={['cast-slide', index === 0 && 'is-active']}
@@ -51,6 +52,7 @@ const firstName = first ? pick(first.data.name, 'ru').text : '';
                       alt=""
                       sizes="(min-width: 900px) 380px, 42vw"
                       priority={index === 0}
+                      defer={defer}
                     />
                   </span>
                   <span class="cast-photo cast-photo-alt">
@@ -58,6 +60,7 @@ const firstName = first ? pick(first.data.name, 'ru').text : '';
                       src={alternate}
                       alt=""
                       sizes="(min-width: 900px) 280px, 30vw"
+                      defer={defer}
                     />
                   </span>
                 </span>

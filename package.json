@@ -15,6 +15,7 @@
     "images": "node ./scripts/optimize-images.mjs",
     "images:check": "node ./scripts/optimize-images.mjs --check",
     "placeholders": "node ./scripts/generate-placeholders.mjs",
+    "import:mangabuff": "node ./scripts/import-mangabuff.mjs",
     "prepare": "simple-git-hooks"
   },
   "simple-git-hooks": {

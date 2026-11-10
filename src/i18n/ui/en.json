@@ -78,11 +78,12 @@
     "count": "Characters in this series: {n}."
   },
   "character": {
-    "portraitAlt": "Full-length figure of {name}, placeholder illustration",
+    "portraitAlt": "Full-length portrait of {name}",
+    "alsoMore": "Every character in this series",
     "explore": "Explore the collection →",
     "scroll": "Scroll to discover",
     "piece": "{name} / {index}",
-    "coverAlt": "Cover of {title}, placeholder illustration",
+    "coverAlt": "Cover of {title}",
     "tags": "Characteristics",
     "about": "About",
     "noBio": "No biography yet.",
