@@ -676,9 +676,11 @@ fieldset.filter-block {
 }
 
 .filter-block + .filter-block {
-  margin-top: 1rem;
-  padding-top: 0.9rem;
-  border-top: 1px solid var(--line);
+  margin-top: 0.1rem;
+}
+
+.filter-clear {
+  margin-top: 0.45rem;
 }
 
 .filter-block h2,
@@ -764,7 +766,7 @@ fieldset.filter-block {
   justify-content: space-between;
   gap: 0.6rem;
   width: 100%;
-  min-height: 40px;
+  min-height: 32px;
   padding: 0.15rem 0;
   border: 0;
   background: transparent;
@@ -773,6 +775,7 @@ fieldset.filter-block {
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
+  line-height: 1.2;
   text-transform: uppercase;
   text-align: left;
   cursor: pointer;
