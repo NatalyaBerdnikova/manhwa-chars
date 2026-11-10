@@ -42,39 +42,90 @@ const filters = tagCategories
   <div class="wrap page" data-character-index>
     <Breadcrumbs crumbs={crumbs} />
     <h1><UiText k="characters.title" /></h1>
-    <p class="lede"><UiText k="characters.lead" /></p>
-    <p class="lede"><noscript><UiText k="filters.noscript" /></noscript></p>
 
     <div class="catalog">
       <input class="filter-toggle" id="filter-open" type="checkbox" />
       <label class="filter-launch" for="filter-open"><UiText k="filters.show" /></label>
       <aside class="sidebar" aria-labelledby="filters-heading">
         <h2 id="filters-heading"><UiText k="filters.heading" /></h2>
-        <div class="filter-block">
-          <h3><UiText k="sort.label" /></h3>
-          <select id="catalog-sort" data-sort>
-            <option value="featured" data-ru={t('ru', 'sort.featured')} data-en={t('en', 'sort.featured')}>{t('ru', 'sort.featured')}</option>
-            <option value="newest" data-ru={t('ru', 'sort.newest')} data-en={t('en', 'sort.newest')}>{t('ru', 'sort.newest')}</option>
-            <option value="name" data-ru={t('ru', 'sort.nameAsc')} data-en={t('en', 'sort.nameAsc')}>{t('ru', 'sort.nameAsc')}</option>
-            <option value="name-desc" data-ru={t('ru', 'sort.nameDesc')} data-en={t('en', 'sort.nameDesc')}>{t('ru', 'sort.nameDesc')}</option>
+        <div class="filter-block sort-menu" data-sort-menu>
+          <select id="catalog-sort" class="sort-native" data-sort tabindex="-1" aria-hidden="true">
+            <option value="featured">{t('ru', 'sort.featured')}</option>
+            <option value="newest">{t('ru', 'sort.newest')}</option>
+            <option value="name">{t('ru', 'sort.nameAsc')}</option>
+            <option value="name-desc">{t('ru', 'sort.nameDesc')}</option>
           </select>
+          <button
+            type="button"
+            class="sort-pill"
+            data-sort-toggle
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-controls="sort-list"
+          >
+            <span data-sort-face="featured"><BiText ru={t('ru', 'sort.featured')} en={t('en', 'sort.featured')} /></span>
+            <span data-sort-face="newest" hidden><BiText ru={t('ru', 'sort.newest')} en={t('en', 'sort.newest')} /></span>
+            <span data-sort-face="name" hidden><BiText ru={t('ru', 'sort.nameAsc')} en={t('en', 'sort.nameAsc')} /></span>
+            <span data-sort-face="name-desc" hidden><BiText ru={t('ru', 'sort.nameDesc')} en={t('en', 'sort.nameDesc')} /></span>
+            <svg class="sort-chevron" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
+              <path d="M3.5 6 L8 10.5 L12.5 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+          <ul id="sort-list" class="sort-list" role="listbox" hidden>
+            <li role="presentation">
+              <button type="button" role="option" data-sort-option="featured" aria-selected="true">
+                <BiText ru={t('ru', 'sort.featured')} en={t('en', 'sort.featured')} />
+              </button>
+            </li>
+            <li role="presentation">
+              <button type="button" role="option" data-sort-option="newest" aria-selected="false">
+                <BiText ru={t('ru', 'sort.newest')} en={t('en', 'sort.newest')} />
+              </button>
+            </li>
+            <li role="presentation">
+              <button type="button" role="option" data-sort-option="name" aria-selected="false">
+                <BiText ru={t('ru', 'sort.nameAsc')} en={t('en', 'sort.nameAsc')} />
+              </button>
+            </li>
+            <li role="presentation">
+              <button type="button" role="option" data-sort-option="name-desc" aria-selected="false">
+                <BiText ru={t('ru', 'sort.nameDesc')} en={t('en', 'sort.nameDesc')} />
+              </button>
+            </li>
+          </ul>
         </div>
         {
-          filters.map((group) => (
-            <fieldset class="filter-block">
-              <legend>
-                <BiText ru={group.category.label.ru} en={group.category.label.en} />
-              </legend>
-              {group.values.map((item) => (
-                <label class="check">
-                  <input type="checkbox" data-filter={group.category.id} value={item.value.id} />
-                  <span>
-                    <BiText ru={item.value.label.ru} en={item.value.label.en} />
-                  </span>
-                  <span class="count">{item.count}</span>
-                </label>
-              ))}
-            </fieldset>
+          filters.map((group, index) => (
+            <div class="filter-block">
+              <button
+                type="button"
+                class="acc-toggle"
+                data-acc
+                aria-expanded={index === 0 ? 'true' : 'false'}
+                aria-controls={`filter-${group.category.id}`}
+              >
+                <span>
+                  <BiText ru={group.category.label.ru} en={group.category.label.en} />
+                </span>
+                <svg class="acc-chevron" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                  <path d="M3.5 6 L8 10.5 L12.5 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </button>
+              <div
+                id={`filter-${group.category.id}`}
+                class:list={['filter-panel', index === 0 && 'is-open', group.values.length > 6 && 'is-scroll']}
+              >
+                {group.values.map((item) => (
+                  <label class="check">
+                    <input type="checkbox" data-filter={group.category.id} value={item.value.id} />
+                    <span>
+                      <BiText ru={item.value.label.ru} en={item.value.label.en} />
+                    </span>
+                    <span class="count">{item.count}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
           ))
         }
         <p style="margin-top: 0.8rem;">

@@ -33,6 +33,7 @@ const firstName = first ? pick(first.data.name, 'ru').text : '';
         characters.map((character, index) => {
           const name = pick(character.data.name, 'ru');
           const nameEn = pick(character.data.name, 'en');
+          const alternate = character.data.hoverImage ?? character.data.imageAlt ?? character.data.image;
           return (
             <li
               class:list={['cast-slide', index === 0 && 'is-active']}
@@ -43,12 +44,21 @@ const firstName = first ? pick(first.data.name, 'ru').text : '';
               <a href={href(`characters/${character.id}`)}>
                 <span class="cast-shadow" aria-hidden="true"></span>
                 <span class="cast-figure">
-                  <CatalogImage
-                    src={character.data.image}
-                    alt=""
-                    sizes="(min-width: 900px) 380px, 70vw"
-                    priority={index === 0}
-                  />
+                  <span class="cast-photo cast-photo-main">
+                    <CatalogImage
+                      src={character.data.image}
+                      alt=""
+                      sizes="(min-width: 900px) 380px, 42vw"
+                      priority={index === 0}
+                    />
+                  </span>
+                  <span class="cast-photo cast-photo-alt">
+                    <CatalogImage
+                      src={alternate}
+                      alt=""
+                      sizes="(min-width: 900px) 280px, 30vw"
+                    />
+                  </span>
                 </span>
                 <span class="cast-name"><BiText ru={name.text} en={nameEn.text} /></span>
               </a>

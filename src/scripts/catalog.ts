@@ -42,6 +42,10 @@ if (root) {
       if (!key) return;
       input.checked = params.getAll(key).includes(input.value);
     });
+    scope.querySelectorAll<HTMLElement>('[data-acc]').forEach((button) => {
+      const panel = document.getElementById(button.getAttribute('aria-controls') || '');
+      if (panel?.querySelector('input:checked')) setAccordion(button, true);
+    });
   }
 
   function writeUrl(query: string, sortValue: string, groups: Map<string, Set<string>>) {
@@ -92,7 +96,19 @@ if (root) {
       status.textContent = template.replace('{shown}', String(shown)).replace('{total}', String(cards.length));
     }
     if (empty) empty.hidden = shown !== 0;
+    scope.querySelectorAll<HTMLElement>('[data-sort-face]').forEach((face) => {
+      face.hidden = face.dataset.sortFace !== sortValue;
+    });
+    scope.querySelectorAll<HTMLElement>('[data-sort-option]').forEach((option) => {
+      option.setAttribute('aria-selected', option.dataset.sortOption === sortValue ? 'true' : 'false');
+    });
     writeUrl(query, sortValue, groups);
+  }
+
+  function setAccordion(button: HTMLElement, open: boolean) {
+    button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    const panel = document.getElementById(button.getAttribute('aria-controls') || '');
+    panel?.classList.toggle('is-open', open);
   }
 
   syncFromUrl();
@@ -112,5 +128,43 @@ if (root) {
     apply();
   });
   document.addEventListener('langchange', apply);
+
+  const sortMenu = scope.querySelector<HTMLElement>('[data-sort-menu]');
+  const sortToggle = scope.querySelector<HTMLButtonElement>('[data-sort-toggle]');
+  const sortList = scope.querySelector<HTMLElement>('#sort-list');
+  function closeSort() {
+    sortList?.setAttribute('hidden', '');
+    sortToggle?.setAttribute('aria-expanded', 'false');
+  }
+  sortToggle?.addEventListener('click', () => {
+    const open = sortToggle.getAttribute('aria-expanded') === 'true';
+    if (open) closeSort();
+    else {
+      sortList?.removeAttribute('hidden');
+      sortToggle.setAttribute('aria-expanded', 'true');
+    }
+  });
+  sortList?.querySelectorAll<HTMLButtonElement>('[data-sort-option]').forEach((option) => {
+    option.addEventListener('click', () => {
+      if (!sort) return;
+      sort.value = option.dataset.sortOption || 'featured';
+      closeSort();
+      apply();
+    });
+  });
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Node) || !sortMenu?.contains(target)) closeSort();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeSort();
+  });
+
+  scope.querySelectorAll<HTMLButtonElement>('[data-acc]').forEach((button) => {
+    button.addEventListener('click', () => {
+      setAccordion(button, button.getAttribute('aria-expanded') !== 'true');
+    });
+  });
+
   apply();
 }
