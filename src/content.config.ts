@@ -20,7 +20,8 @@ const works = defineCollection({
       originalTitle: z.string().min(1).optional(),
       altTitles: z.array(z.string().min(1)).optional(),
       description: localized,
-      cover: image(),
+      cover: image().optional(),
+      genres: z.array(z.string().min(1)).optional(),
       year: z.number().int().min(1900).max(2100).optional(),
       author: z.string().min(1).optional(),
       status: z.enum(['ongoing', 'completed', 'hiatus']).optional(),
@@ -41,7 +42,17 @@ const characters = defineCollection({
       hoverImage: image().optional(),
       imageAlt: image().optional(),
       bio: localized.optional(),
-      tags: z.record(z.string(), z.string()).optional(),
+      // Empty values are ignored. Characteristics can be filled in later.
+      tags: z
+        .record(z.string(), z.string())
+        .optional()
+        .transform((tags) => {
+          if (!tags) return undefined;
+          const filled = Object.fromEntries(
+            Object.entries(tags).filter(([, value]) => value.trim().length > 0),
+          );
+          return Object.keys(filled).length > 0 ? filled : undefined;
+        }),
       featured: z.boolean().optional(),
       added: z
         .string()

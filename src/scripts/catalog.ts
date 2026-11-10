@@ -113,7 +113,8 @@ if (root) {
     }
     if (status) {
       const template = status.getAttribute(language === 'en' ? 'data-template-en' : 'data-template-ru') ?? '';
-      status.textContent = template.replace('{shown}', String(matched)).replace('{total}', String(cards.length));
+      const visibleCount = Math.min(pageLimit, matched);
+      status.textContent = template.replace('{shown}', String(visibleCount)).replace('{total}', String(matched));
     }
     if (empty) empty.hidden = matched !== 0;
     if (moreButton) moreButton.hidden = matched <= pageLimit;

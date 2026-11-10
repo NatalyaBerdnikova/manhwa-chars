@@ -41,7 +41,7 @@ async function load(): Promise<Catalog> {
     assertSlug(work.id, 'Work');
     if (worksById.has(work.id)) throw new Error(`Duplicate work id "${work.id}".`);
     worksById.set(work.id, work);
-    assertWebp(work.data.cover.format, work.id, 'cover');
+    if (work.data.cover) assertWebp(work.data.cover.format, work.id, 'cover');
   }
 
   const seenCharacters = new Set<string>();
@@ -64,6 +64,7 @@ async function load(): Promise<Catalog> {
       );
     }
     for (const [categoryId, valueId] of Object.entries(character.data.tags ?? {})) {
+      if (!valueId.trim()) continue;
       const issue = tagError(categoryId, valueId);
       if (issue) throw new Error(`Character "${character.id}": ${issue}`);
     }

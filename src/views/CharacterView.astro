@@ -48,6 +48,7 @@ const cast = [...(catalog.charactersByWork.get(work.id) ?? [])].sort((a, b) =>
   pick(a.data.name, 'ru').text.localeCompare(pick(b.data.name, 'ru').text, 'ru'),
 );
 const others = cast.filter((item) => item.id !== character.id);
+const also = others.slice(0, 12);
 const index = String(Math.max(1, cast.findIndex((item) => item.id === character.id) + 1)).padStart(2, '0');
 const materialRu = tags.map((tag) => tag.value.text).join(' · ');
 const materialEn = tagsEn.map((tag) => tag.value.text).join(' · ');
@@ -158,16 +159,23 @@ const altEn = t('en', 'character.portraitAlt', { name: nameEn.text });
         {!bio?.text && !bodyRu.html && <p class="empty"><UiText k="character.noBio" /></p>}
       </section>
       {
-        others.length > 0 && (
+        also.length > 0 && (
           <section class="section">
             <h2><UiText k="character.also" /></h2>
             <ul class="grid" style="margin-top: 0.9rem;">
-              {others.map((item) => (
+              {also.map((item) => (
                 <li>
                   <CharacterCard character={item} work={work} level="h3" detail="tags" />
                 </li>
               ))}
             </ul>
+            {
+              others.length > also.length && (
+                <p class="section-more">
+                  <a href={href(`works/${work.id}`)}><UiText k="character.alsoMore" /></a>
+                </p>
+              )
+            }
           </section>
         )
       }

@@ -38,7 +38,7 @@ const crumbs = [
 ];
 const altRu = t('ru', 'character.coverAlt', { title: title.text });
 const altEn = t('en', 'character.coverAlt', { title: titleEn.text });
-const social = await socialImage(work.data.cover);
+const social = work.data.cover ? await socialImage(work.data.cover) : null;
 ---
 
 <BaseLayout
@@ -60,7 +60,7 @@ const social = await socialImage(work.data.cover);
         (item) => item && item !== title.text,
       ),
       description: excerpt(description.text),
-      image: absoluteUrl(social.src, Astro.site),
+      ...(social ? { image: absoluteUrl(social.src, Astro.site) } : {}),
       url: abs(`works/${work.id}`),
       inLanguage: 'ru',
       ...(work.data.author ? { author: { '@type': 'Person', name: work.data.author } } : {}),
@@ -82,7 +82,7 @@ const social = await socialImage(work.data.cover);
     {
       cast.length > 0 ? (
         <CastSlider characters={cast} titleRu={title.text} titleEn={titleEn.text} />
-      ) : (
+      ) : work.data.cover ? (
         <div class="wrap">
           <section class="banner">
             <div class="banner-media">
@@ -90,7 +90,7 @@ const social = await socialImage(work.data.cover);
             </div>
           </section>
         </div>
-      )
+      ) : null
     }
     <div class="wrap">
       <section class="work-copy">
@@ -109,6 +109,11 @@ const social = await socialImage(work.data.cover);
           {
             work.data.altTitles?.map((item) => (
               <span class="badge">{item}</span>
+            ))
+          }
+          {
+            work.data.genres?.map((genre) => (
+              <span class="badge">{genre}</span>
             ))
           }
         </div>

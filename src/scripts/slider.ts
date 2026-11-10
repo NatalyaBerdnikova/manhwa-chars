@@ -68,6 +68,21 @@ sliders.forEach((root) => {
         .replace('{total}', String(count));
     }
     labelToggle();
+    slides.forEach((slide, slideIndex) => {
+      if (Math.abs(offsetOf(slideIndex)) > 1) return;
+      slide.querySelectorAll<HTMLElement>('[data-deferred-picture]').forEach((picture) => {
+        if (picture.dataset.armed === 'true') return;
+        picture.querySelectorAll<HTMLSourceElement>('[data-srcset]').forEach((node) => {
+          const value = node.getAttribute('data-srcset');
+          if (value) node.srcset = value;
+        });
+        picture.querySelectorAll<HTMLImageElement>('img[data-src]').forEach((node) => {
+          const value = node.getAttribute('data-src');
+          if (value) node.src = value;
+        });
+        picture.dataset.armed = 'true';
+      });
+    });
   }
 
   function stop() {

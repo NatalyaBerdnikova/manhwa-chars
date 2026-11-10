@@ -1,5 +1,5 @@
 ---
-import { Picture } from 'astro:assets';
+import { getImage, Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
 interface Props {
@@ -7,22 +7,56 @@ interface Props {
   alt: string;
   sizes: string;
   priority?: boolean;
+  /** Leave src empty until the slider moves this picture near the center. */
+  defer?: boolean;
 }
 
-const { src, alt, sizes, priority = false } = Astro.props;
-// Stay strictly below the master width. A same-size WebP would collide with
-// the imported file and Astro's image pipeline would fail the build.
-const widths = [360, 540, 720, 960, 1280].filter((width) => width < src.width);
-if (widths.length === 0) widths.push(Math.max(1, src.width - 1));
+const { src, alt, sizes, priority = false, defer = false } = Astro.props;
+// One width, strictly below the master, so a few thousand cards stay cheap to encode.
+const target = Math.min(480, Math.max(1, src.width - 1));
+const quality = 68;
+
+let deferred:
+  | { avif: string; webp: string; width: number; height: number }
+  | undefined;
+if (defer) {
+  const [avif, webp] = await Promise.all([
+    getImage({ src, width: target, format: 'avif', quality }),
+    getImage({ src, width: target, format: 'webp', quality }),
+  ]);
+  deferred = {
+    avif: avif.src,
+    webp: webp.src,
+    width: webp.attributes.width ?? target,
+    height: webp.attributes.height ?? Math.max(1, Math.round((src.height * target) / src.width)),
+  };
+}
 ---
 
-<Picture
-  src={src}
-  alt={alt}
-  widths={widths}
-  sizes={sizes}
-  formats={['avif', 'webp']}
-  fallbackFormat="png"
-  quality={70}
-  priority={priority}
-/>
+{
+  deferred ? (
+    <picture data-deferred-picture>
+      <source type="image/avif" data-srcset={deferred.avif} />
+      <img
+        alt={alt}
+        data-src={deferred.webp}
+        width={deferred.width}
+        height={deferred.height}
+        decoding="async"
+      />
+    </picture>
+  ) : (
+    <Picture
+      src={src}
+      alt={alt}
+      widths={[target]}
+      sizes={sizes}
+      formats={['avif']}
+      fallbackFormat="webp"
+      quality={quality}
+      priority={priority}
+      loading={priority ? 'eager' : 'lazy'}
+      decoding="async"
+    />
+  )
+}

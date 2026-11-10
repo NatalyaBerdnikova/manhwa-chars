@@ -43,11 +43,8 @@ const orderedWorks = [...works].sort((a, b) => (b.data.year ?? 0) - (a.data.year
       <a class="button secondary" href={href('works')}><UiText k="home.ctaWorks" /></a>
     </div>
 
-    <aside class="note section">
-      <h2><UiText k="home.demoTitle" /></h2>
-      <p><UiText k="home.demoBody" /></p>
-    </aside>
-
+    {
+      featured.length > 0 && (
     <section class="section" aria-labelledby="featured-title">
       <div class="section-head">
         <div>
@@ -70,9 +67,11 @@ const orderedWorks = [...works].sort((a, b) => (b.data.year ?? 0) - (a.data.year
         }
       </ul>
     </section>
+      )
+    }
 
     {
-      recent.length > 0 && (
+      recent.some((character) => character.data.added) && (
         <section class="section" aria-labelledby="recent-title">
           <div class="section-head">
             <div>

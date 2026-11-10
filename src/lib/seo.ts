@@ -3,12 +3,14 @@ import type { ImageMetadata } from 'astro';
 import { abs } from './urls';
 
 export async function socialImage(src: ImageMetadata) {
+  const width = Math.min(720, src.width);
+  const height = Math.max(1, Math.min(630, Math.round(src.height * (width / src.width))));
   return getImage({
     src,
-    width: 1200,
-    height: 630,
+    width,
+    height,
     format: 'jpeg',
-    quality: 75,
+    quality: 70,
     fit: 'cover',
     position: src.height > src.width ? 'north' : 'centre',
     // JPEG cannot keep a cutout's alpha. Flatten onto the page color
