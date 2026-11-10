@@ -4,6 +4,7 @@ name:
   en: "Sera Ash"
 work: "ash-throne"
 image: "../../assets/optimized/characters/sera-ash.webp"
+hoverImage: "../../assets/optimized/characters/sera-ash-alt.webp"
 featured: true
 added: "2026-04-01"
 tags:

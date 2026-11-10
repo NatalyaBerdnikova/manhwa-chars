@@ -4,6 +4,7 @@ name:
   en: "Mira Han"
 work: "midnight-garden"
 image: "../../assets/optimized/characters/mira-han.webp"
+hoverImage: "../../assets/optimized/characters/mira-han-alt.webp"
 featured: true
 added: "2026-06-15"
 tags:

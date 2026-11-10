@@ -5,7 +5,7 @@ compatibility_date = "2026-11-01"
 # Public site origin, no trailing slash. Override per environment:
 #   npx wrangler deploy --var ALLOWED_ORIGIN:https://example.com
 [vars]
-ALLOWED_ORIGIN = "https://example.com"
+ALLOWED_ORIGIN = "https://natalyaberdnikova.github.io"
 
 # Secrets (not stored here):
 #   npx wrangler secret put TELEGRAM_BOT_TOKEN

@@ -1,6 +1,5 @@
 ---
 import { t } from '../i18n';
-import { tagCategories } from '../data/tags';
 import { href } from '../lib/urls';
 import BiText from './BiText.astro';
 
@@ -15,59 +14,62 @@ const links = [
   { id: 'tags', href: href('tags'), ru: t('ru', 'nav.tags'), en: t('en', 'nav.tags') },
   { id: 'submit', href: href('submit'), ru: t('ru', 'nav.submit'), en: t('en', 'nav.submit') },
 ];
+const catalogOpen = routePath === 'characters';
 
 function current(id: string): boolean {
   return routePath === id || routePath.startsWith(`${id}/`);
 }
 ---
 
-<header class="site-header">
-  <div class="wrap header-top">
-    <a class="brand" href={href()}>
-      <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
-        <rect width="32" height="32" rx="8" fill="currentColor"></rect>
-        <path d="M8 20.5c3-6 6-8 8.2-8 2.2 0 3.4 1.5 4.8 3.4" fill="none" stroke="var(--bg)" stroke-width="1.8" stroke-linecap="round"></path>
-        <circle cx="22.5" cy="10" r="2.2" fill="var(--accent)"></circle>
-      </svg>
+<header class="site-header" data-site-header>
+  <div class="wrap header-bar">
+    <a class="wordmark" href={href()}>
       <BiText ru={t('ru', 'meta.siteName')} en={t('en', 'meta.siteName')} />
     </a>
-    <form class="search" action={href('characters')} method="get" role="search">
-      <label class="visually-hidden" for="site-search">
-        <BiText ru={t('ru', 'search.label')} en={t('en', 'search.label')} />
-      </label>
-      <input
-        id="site-search"
-        type="search"
-        name="q"
-        placeholder={t('ru', 'search.placeholder')}
-        data-ph-ru={t('ru', 'search.placeholder')}
-        data-ph-en={t('en', 'search.placeholder')}
-        autocomplete="off"
-        enterkeyhint="search"
-      />
-      <button class="icon-button search-go" type="submit">
-        <BiText ru={t('ru', 'search.submit')} en={t('en', 'search.submit')} />
-      </button>
-    </form>
-    <script is:inline>
-      (function () {
-        var input = document.getElementById('site-search');
-        if (!input) return;
-        if (document.documentElement.getAttribute('data-lang') === 'en') {
-          input.placeholder = input.getAttribute('data-ph-en') || input.placeholder;
-        }
-        var params = new URLSearchParams(location.search);
-        if (params.get('q') && location.pathname.indexOf('/characters') !== -1) input.value = params.get('q');
-      })();
-    </script>
-    <div class="tools">
+    <button
+      type="button"
+      class="nav-toggle"
+      aria-expanded="false"
+      aria-controls="site-nav"
+      data-aria-ru={t('ru', 'nav.menu')}
+      data-aria-en={t('en', 'nav.menu')}
+    >
+      <span class="nav-open"><BiText ru={t('ru', 'nav.menu')} en={t('en', 'nav.menu')} /></span>
+      <span class="nav-close"><BiText ru={t('ru', 'nav.close')} en={t('en', 'nav.close')} /></span>
+    </button>
+    <nav id="site-nav" class="header-nav" aria-label={t('ru', 'nav.main')} data-aria-ru={t('ru', 'nav.main')} data-aria-en={t('en', 'nav.main')}>
+      {
+        links.map((link) => (
+          <a href={link.href} aria-current={current(link.id) ? 'page' : undefined}>
+            <BiText ru={link.ru} en={link.en} />
+          </a>
+        ))
+      }
+    </nav>
+    <div class="header-tools">
       <div class="langs" role="group" aria-label={t('ru', 'lang.switcher')} data-aria-ru={t('ru', 'lang.switcher')} data-aria-en={t('en', 'lang.switcher')}>
         <button type="button" data-set-lang="ru" lang="ru" aria-pressed="true">RU</button>
         <button type="button" data-set-lang="en" lang="en" aria-pressed="false">EN</button>
       </div>
       <button
         type="button"
-        class="theme-toggle"
+        class="icon-hit search-toggle"
+        aria-expanded={catalogOpen ? 'true' : 'false'}
+        aria-controls="site-search-panel"
+        data-aria-open-ru={t('ru', 'search.open')}
+        data-aria-open-en={t('en', 'search.open')}
+        data-aria-close-ru={t('ru', 'search.close')}
+        data-aria-close-en={t('en', 'search.close')}
+        aria-label={catalogOpen ? t('ru', 'search.close') : t('ru', 'search.open')}
+      >
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="1.6"></circle>
+          <path d="M15.2 15.2 L20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="icon-hit theme-toggle"
         id="theme-toggle"
         data-label-dark-ru={t('ru', 'theme.toDark')}
         data-label-dark-en={t('en', 'theme.toDark')}
@@ -81,20 +83,86 @@ function current(id: string): boolean {
       </button>
     </div>
   </div>
-  <nav class="wrap header-nav" aria-label={t('ru', 'nav.main')} data-aria-ru={t('ru', 'nav.main')} data-aria-en={t('en', 'nav.main')}>
-    {
-      links.map((link) => (
-        <a href={link.href} aria-current={current(link.id) ? 'page' : undefined}>
-          <BiText ru={link.ru} en={link.en} />
-        </a>
-      ))
-    }
-    {
-      tagCategories.map((category) => (
-        <a class="cat" href={href(`tags/${category.id}`)} aria-current={routePath === `tags/${category.id}` || routePath.startsWith(`tags/${category.id}/`) ? 'page' : undefined}>
-          <BiText ru={category.label.ru} en={category.label.en} />
-        </a>
-      ))
-    }
-  </nav>
+  <div class="header-search" id="site-search-panel" hidden={!catalogOpen}>
+    <form class="wrap search-row" action={href('characters')} method="get" role="search">
+      <label class="visually-hidden" for="site-search">
+        <BiText ru={t('ru', 'search.label')} en={t('en', 'search.label')} />
+      </label>
+      <input
+        id="site-search"
+        type="search"
+        name="q"
+        placeholder={t('ru', 'search.placeholder')}
+        data-ph-ru={t('ru', 'search.placeholder')}
+        data-ph-en={t('en', 'search.placeholder')}
+        autocomplete="off"
+        enterkeyhint="search"
+      />
+      <button class="search-submit" type="submit">
+        <BiText ru={t('ru', 'search.submit')} en={t('en', 'search.submit')} />
+      </button>
+    </form>
+  </div>
+  <script is:inline>
+    (function () {
+      var header = document.querySelector('[data-site-header]');
+      if (!header) return;
+      var navBtn = header.querySelector('.nav-toggle');
+      var searchBtn = header.querySelector('.search-toggle');
+      var panel = document.getElementById('site-search-panel');
+      var input = document.getElementById('site-search');
+
+      function lang() {
+        return document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'ru';
+      }
+      function setNav(open) {
+        header.classList.toggle('is-nav-open', open);
+        if (navBtn) navBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      function searchLabel(open) {
+        if (!searchBtn) return;
+        var key = (open ? 'data-aria-close-' : 'data-aria-open-') + lang();
+        searchBtn.setAttribute('aria-label', searchBtn.getAttribute(key) || '');
+        searchBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      function setSearch(open, focus) {
+        if (!panel) return;
+        panel.hidden = !open;
+        searchLabel(open);
+        if (open && focus && input) input.focus();
+      }
+      if (navBtn) {
+        navBtn.addEventListener('click', function () {
+          setNav(!header.classList.contains('is-nav-open'));
+        });
+      }
+      if (searchBtn) {
+        searchBtn.addEventListener('click', function () {
+          setSearch(Boolean(panel && panel.hidden), true);
+        });
+      }
+      document.addEventListener('keydown', function (event) {
+        if (event.key !== 'Escape') return;
+        if (header.classList.contains('is-nav-open')) setNav(false);
+        if (panel && !panel.hidden && !panel.hasAttribute('data-pinned')) {
+          setSearch(false, false);
+          if (searchBtn) searchBtn.focus();
+        }
+      });
+      document.addEventListener('langchange', function () {
+        if (searchBtn && panel) searchLabel(!panel.hidden);
+      });
+      if (input && document.documentElement.getAttribute('data-lang') === 'en') {
+        input.placeholder = input.getAttribute('data-ph-en') || input.placeholder;
+      }
+      if (input && location.pathname.indexOf('/characters') !== -1) {
+        var params = new URLSearchParams(location.search);
+        if (params.get('q')) {
+          input.value = params.get('q') || '';
+          setSearch(true, false);
+        }
+      }
+      if (searchBtn && panel) searchLabel(!panel.hidden);
+    })();
+  </script>
 </header>

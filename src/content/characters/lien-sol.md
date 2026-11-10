@@ -4,6 +4,7 @@ name:
   en: "Lien Sol"
 work: "silver-oath"
 image: "../../assets/optimized/characters/lien-sol.webp"
+hoverImage: "../../assets/optimized/characters/lien-sol-alt.webp"
 featured: true
 added: "2026-10-12"
 tags:

@@ -11,6 +11,9 @@ export async function socialImage(src: ImageMetadata) {
     quality: 75,
     fit: 'cover',
     position: src.height > src.width ? 'north' : 'centre',
+    // JPEG cannot keep a cutout's alpha. Flatten onto the page color
+    // so a transparent figure does not turn black in Open Graph cards.
+    background: '#f7f6f4',
   });
 }
 

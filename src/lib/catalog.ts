@@ -50,6 +50,8 @@ async function load(): Promise<Catalog> {
     if (seenCharacters.has(character.id)) throw new Error(`Duplicate character id "${character.id}".`);
     seenCharacters.add(character.id);
     assertWebp(character.data.image.format, character.id, 'image');
+    if (character.data.hoverImage) assertWebp(character.data.hoverImage.format, character.id, 'hoverImage');
+    if (character.data.imageAlt) assertWebp(character.data.imageAlt.format, character.id, 'imageAlt');
     const work = worksById.get(character.data.work);
     if (!work) {
       throw new Error(

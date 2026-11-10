@@ -42,7 +42,7 @@ jobs:
           # User site (username.github.io): set SITE_URL and BASE_PATH=/
           SITE_URL: ${{ vars.SITE_URL || 'https://natalyaberdnikova.github.io' }}
           BASE_PATH: ${{ vars.BASE_PATH || '/manhwa-chars/' }}
-          PUBLIC_FORM_ENDPOINT: ${{ vars.PUBLIC_FORM_ENDPOINT }}
+          PUBLIC_FORM_ENDPOINT: ${{ vars.PUBLIC_FORM_ENDPOINT || 'https://manhwa-chars-telegram.manhwa-chars.workers.dev' }}
           PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
 
       - name: Upload artifact

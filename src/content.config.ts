@@ -36,6 +36,10 @@ const characters = defineCollection({
       name: localized,
       work: slug,
       image: image(),
+      // Optional second cutout. Either name works; hoverImage wins when both are set.
+      // Cards swap to it on hover. Without it, the portrait only scales.
+      hoverImage: image().optional(),
+      imageAlt: image().optional(),
       bio: localized.optional(),
       tags: z.record(z.string(), z.string()).optional(),
       featured: z.boolean().optional(),

@@ -11,47 +11,50 @@ interface Props {
   work: WorkEntry;
   level?: 'h2' | 'h3';
   priority?: boolean;
+  /** Work title reads like a price line. On a work page, tags read like a material line. */
+  detail?: 'work' | 'tags';
 }
 
-const { character, work, level = 'h2', priority = false } = Astro.props;
+const { character, work, level = 'h2', priority = false, detail = 'work' } = Astro.props;
 const name = pick(character.data.name, 'ru');
 const nameEn = pick(character.data.name, 'en');
 const workTitle = pick(work.data.title, 'ru');
 const workTitleEn = pick(work.data.title, 'en');
-const tags = resolveTags(character.data.tags, 'ru').slice(0, 3);
+const tags = resolveTags(character.data.tags, 'ru');
 const tagsEn = resolveTags(character.data.tags, 'en');
+const tagLine = tags.map((tag) => tag.value.text).join(' · ');
+const tagLineEn = tagsEn.map((tag) => tag.value.text).join(' · ');
+const lineRu = detail === 'tags' && tagLine ? tagLine : workTitle.text;
+const lineEn = detail === 'tags' && (tagLineEn || tagLine) ? tagLineEn || tagLine : workTitleEn.text;
+const hover = character.data.hoverImage ?? character.data.imageAlt;
 const page = href(`characters/${character.id}`);
 const Heading = level;
 ---
 
-<article class="card">
-  <a class="card-link" href={page}>
-    <div class="card-media">
-      <CatalogImage
-        src={character.data.image}
-        alt=""
-        sizes="(min-width: 1100px) 220px, (min-width: 700px) 30vw, 46vw"
-        priority={priority}
-      />
+<article class:list={['tile', hover && 'has-alt']}>
+  <a class="tile-link" href={page}>
+    <div class="tile-stage">
+      <div class="tile-shot tile-shot-main">
+        <CatalogImage
+          src={character.data.image}
+          alt=""
+          sizes="(min-width: 1100px) 240px, (min-width: 700px) 30vw, 46vw"
+          priority={priority}
+        />
+      </div>
+      {
+        hover && (
+          <div class="tile-shot tile-shot-alt" aria-hidden="true">
+            <CatalogImage
+              src={hover}
+              alt=""
+              sizes="(min-width: 1100px) 240px, (min-width: 700px) 30vw, 46vw"
+            />
+          </div>
+        )
+      }
     </div>
+    <Heading class="tile-name"><BiText ru={name.text} en={nameEn.text} /></Heading>
+    <p class="tile-line"><BiText ru={lineRu} en={lineEn} /></p>
   </a>
-  <div class="card-body">
-    <Heading class="card-title"><a href={page}><BiText ru={name.text} en={nameEn.text} /></a></Heading>
-    <p class="card-work">
-      <a href={href(`works/${work.id}`)}><BiText ru={workTitle.text} en={workTitleEn.text} /></a>
-    </p>
-    {
-      tags.length > 0 && (
-        <ul class="chip-row">
-          {tags.map((tag, index) => (
-            <li>
-              <a class="chip" href={href(`tags/${tag.categoryId}/${tag.valueId}`)}>
-                <BiText ru={tag.value.text} en={tagsEn[index]?.value.text || tag.value.text} />
-              </a>
-            </li>
-          ))}
-        </ul>
-      )
-    }
-  </div>
 </article>
