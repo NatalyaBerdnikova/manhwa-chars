@@ -136,11 +136,30 @@ const filters = tagCategories
             })
           }
         </ul>
-        <p class="catalog-more">
-          <button type="button" class="button secondary" data-show-more hidden>
-            <UiText k="catalog.more" />
+        <nav
+          class="pager"
+          data-pager
+          hidden
+          aria-label={t('ru', 'catalog.pages')}
+          data-label-ru={t('ru', 'catalog.pages')}
+          data-label-en={t('en', 'catalog.pages')}
+          data-prev-ru={t('ru', 'catalog.prev')}
+          data-prev-en={t('en', 'catalog.prev')}
+          data-next-ru={t('ru', 'catalog.next')}
+          data-next-en={t('en', 'catalog.next')}
+        >
+          <button type="button" class="pager-arrow" data-page-prev>
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+              <path d="M14.5 5 L7.5 12 L14.5 19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
           </button>
-        </p>
+          <ol class="pager-pages" data-page-list></ol>
+          <button type="button" class="pager-arrow" data-page-next>
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+              <path d="M9.5 5 L16.5 12 L9.5 19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+        </nav>
       </div>
     </div>
   </div>

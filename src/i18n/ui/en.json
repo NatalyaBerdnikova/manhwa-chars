@@ -117,7 +117,9 @@
     "hide": "Hide filters"
   },
   "catalog": {
-    "more": "Show more"
+    "pages": "Pages",
+    "prev": "Previous",
+    "next": "Next"
   },
   "search": {
     "label": "Search",

@@ -1295,12 +1295,72 @@ textarea[aria-invalid="true"] {
   background: var(--surface);
 }
 
-.catalog-more {
-  margin: 1.1rem 0 0;
+.pager {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 1.35rem 0 0.2rem;
 }
 
-.catalog-more button[hidden] {
+.pager[hidden] {
   display: none;
+}
+
+.pager-pages {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pager-arrow,
+.pager-pages button {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 0.55rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pager-pages button[aria-current="page"] {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.pager-arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pager-gap {
+  min-width: 1.5rem;
+  color: var(--faint);
+  letter-spacing: 0.14em;
+  text-align: center;
+}
+
+.grid[data-catalog-grid] {
+  scroll-margin-top: 4.75rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pager-arrow:not(:disabled):hover,
+  .pager-pages button:not([aria-current="page"]):hover {
+    border-color: var(--line);
+    background: var(--surface);
+  }
 }
 
 @media (hover: hover) and (pointer: fine) {
