@@ -35,7 +35,6 @@
   "footer": {
     "lead": "A catalog of manhwa characters, gathered in one place.",
     "demo": "The catalog currently holds demo data: fictional series and locally drawn placeholders, not panels from real manhwa.",
-    "owner": "Kept by {author}.",
     "submit": "Suggest a character",
     "tags": "Characteristics"
   },
@@ -167,6 +166,7 @@
     "kindCharacter": "A character",
     "kindWork": "A series",
     "workTitle": "Series title",
+    "workTitleHint": "Choose one from the list, or type your own.",
     "characterName": "Character name",
     "characterHint": "Required if you are suggesting a character.",
     "source": "Source link",
@@ -174,7 +174,8 @@
     "image": "Image link",
     "optional": "optional",
     "tags": "Suggested characteristics",
-    "tagsHint": "For example: hair color — silver; title — knight.",
+    "tagsHint": "Comma-separated. For example: silver hair, grey eyes, knight.",
+    "tagsPlaceholder": "Comma-separated",
     "comments": "Comment",
     "email": "Contact email",
     "emailHint": "Only needed if you want a reply.",

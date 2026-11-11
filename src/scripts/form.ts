@@ -50,8 +50,117 @@ if (form) {
   submission.querySelectorAll('input[name="kind"]').forEach((input) => {
     input.addEventListener('change', syncKind);
   });
-  document.addEventListener('langchange', syncKind);
+  document.addEventListener('langchange', () => {
+    syncKind();
+    renderTitles();
+  });
   syncKind();
+
+  const titleInput = submission.querySelector<HTMLInputElement>('[data-title-combo]');
+  const titleList = document.querySelector<HTMLElement>('#work-title-list');
+  const titleData = document.querySelector<HTMLScriptElement>('#work-title-data');
+  let titleItems: { ru: string; en: string }[] = [];
+  try {
+    titleItems = JSON.parse(titleData?.textContent || '[]') as { ru: string; en: string }[];
+  } catch {
+    titleItems = [];
+  }
+  let activeTitle = -1;
+
+  function titleChoices(): string[] {
+    const seen = new Set<string>();
+    const choices: string[] = [];
+    for (const item of titleItems) {
+      const value = (lang() === 'en' ? item.en : item.ru).trim();
+      const key = value.toLocaleLowerCase(lang() === 'en' ? 'en' : 'ru');
+      if (!value || seen.has(key)) continue;
+      seen.add(key);
+      choices.push(value);
+    }
+    return choices;
+  }
+
+  function closeTitles() {
+    if (!titleList || !titleInput) return;
+    titleList.hidden = true;
+    titleList.replaceChildren();
+    titleInput.setAttribute('aria-expanded', 'false');
+    titleInput.removeAttribute('aria-activedescendant');
+    activeTitle = -1;
+  }
+
+  function renderTitles() {
+    if (!titleList || !titleInput) return;
+    const query = titleInput.value.trim().toLocaleLowerCase(lang() === 'en' ? 'en' : 'ru');
+    const matches = titleChoices()
+      .filter((value) => !query || value.toLocaleLowerCase(lang() === 'en' ? 'en' : 'ru').includes(query))
+      .slice(0, 8);
+    titleList.replaceChildren();
+    if (matches.length === 0 || document.activeElement !== titleInput) {
+      closeTitles();
+      return;
+    }
+    matches.forEach((value, index) => {
+      const item = document.createElement('li');
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.id = `work-title-option-${index}`;
+      button.setAttribute('role', 'option');
+      button.textContent = value;
+      button.addEventListener('mousedown', (event) => {
+        event.preventDefault();
+        titleInput.value = value;
+        closeTitles();
+      });
+      item.append(button);
+      titleList.append(item);
+    });
+    if (activeTitle >= matches.length) activeTitle = matches.length - 1;
+    markTitle(activeTitle);
+    titleList.hidden = false;
+    titleInput.setAttribute('aria-expanded', 'true');
+  }
+
+  function markTitle(index: number) {
+    if (!titleList || !titleInput) return;
+    const buttons = [...titleList.querySelectorAll<HTMLButtonElement>('button')];
+    buttons.forEach((button, buttonIndex) => {
+      const selected = buttonIndex === index;
+      button.setAttribute('aria-selected', selected ? 'true' : 'false');
+      if (selected) titleInput.setAttribute('aria-activedescendant', button.id);
+    });
+    if (index < 0) titleInput.removeAttribute('aria-activedescendant');
+  }
+
+  titleInput?.addEventListener('input', () => {
+    activeTitle = -1;
+    renderTitles();
+  });
+  titleInput?.addEventListener('focus', () => {
+    activeTitle = -1;
+    renderTitles();
+  });
+  titleInput?.addEventListener('blur', () => {
+    closeTitles();
+  });
+  titleInput?.addEventListener('keydown', (event) => {
+    const buttons = [...(titleList?.querySelectorAll<HTMLButtonElement>('button') ?? [])];
+    if (event.key === 'ArrowDown' && buttons.length) {
+      event.preventDefault();
+      activeTitle = Math.min(buttons.length - 1, activeTitle + 1);
+      markTitle(activeTitle);
+    } else if (event.key === 'ArrowUp' && buttons.length) {
+      event.preventDefault();
+      activeTitle = Math.max(-1, activeTitle - 1);
+      markTitle(activeTitle);
+    } else if (event.key === 'Enter' && activeTitle >= 0 && buttons[activeTitle]) {
+      event.preventDefault();
+      titleInput.value = buttons[activeTitle].textContent || titleInput.value;
+      closeTitles();
+    } else if (event.key === 'Escape') {
+      closeTitles();
+    }
+  });
 
   submission.addEventListener('submit', async (event) => {
     const endpoint = submission.dataset.endpoint || '';

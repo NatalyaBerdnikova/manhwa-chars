@@ -1,21 +1,22 @@
 ---
 import { formEndpoint, turnstileSiteKey } from '../config';
-import { t } from '../i18n';
+import { pick, t } from '../i18n';
+import { getCatalog } from '../lib/catalog';
 import UiText from './UiText.astro';
-import BiText from './BiText.astro';
 
 const configured = Boolean(formEndpoint);
+const { works } = await getCatalog();
+const titleOptions = works
+  .map((work) => ({
+    ru: pick(work.data.title, 'ru').text,
+    en: pick(work.data.title, 'en').text,
+  }))
+  .sort((a, b) => a.ru.localeCompare(b.ru, 'ru'));
+const titleOptionsJson = JSON.stringify(titleOptions).replaceAll('<', '\\u003c');
 ---
 
 {
-  configured ? (
-    <p class="note">
-      <BiText
-        ru="Заявка приходит владельцу каталога в Telegram."
-        en="The suggestion is sent to the catalog owner in Telegram."
-      />
-    </p>
-  ) : (
+  !configured && (
     <p class="note">
       <UiText k="form.notConfigured" />
     </p>
@@ -69,8 +70,27 @@ const configured = Boolean(formEndpoint);
 
   <div class="field">
     <label for="work-title"><UiText k="form.workTitle" /></label>
-    <input id="work-title" name="work_title" type="text" required minlength="2" maxlength="200" autocomplete="off" data-field />
+    <div class="combo">
+      <input
+        id="work-title"
+        name="work_title"
+        type="text"
+        required
+        minlength="2"
+        maxlength="200"
+        autocomplete="off"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-expanded="false"
+        aria-controls="work-title-list"
+        data-field
+        data-title-combo
+      />
+      <ul id="work-title-list" class="combo-list" role="listbox" hidden></ul>
+    </div>
+    <p class="hint"><UiText k="form.workTitleHint" /></p>
     <p id="work-title-error" class="field-error" hidden></p>
+    <script id="work-title-data" type="application/json" is:inline set:html={titleOptionsJson}></script>
   </div>
 
   <div class="field">
@@ -99,7 +119,16 @@ const configured = Boolean(formEndpoint);
     <label for="suggested-tags">
       <UiText k="form.tags" /> <span class="hint">(<UiText k="form.optional" />)</span>
     </label>
-    <textarea id="suggested-tags" name="suggested_tags" maxlength="500" rows="3" data-field></textarea>
+    <textarea
+      id="suggested-tags"
+      name="suggested_tags"
+      maxlength="500"
+      rows="3"
+      data-field
+      placeholder={t('ru', 'form.tagsPlaceholder')}
+      data-ph-ru={t('ru', 'form.tagsPlaceholder')}
+      data-ph-en={t('en', 'form.tagsPlaceholder')}
+    ></textarea>
     <p class="hint"><UiText k="form.tagsHint" /></p>
     <p id="suggested-tags-error" class="field-error" hidden></p>
   </div>

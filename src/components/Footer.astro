@@ -1,17 +1,11 @@
 ---
-import { author } from '../config';
-import { t } from '../i18n';
 import { href } from '../lib/urls';
-import BiText from './BiText.astro';
 import UiText from './UiText.astro';
 
 ---
 
 <footer class="site-footer">
   <div class="wrap footer-inner">
-    <p>
-      <BiText ru={t('ru', 'footer.owner', { author })} en={t('en', 'footer.owner', { author })} />
-    </p>
     <div class="footer-links">
       <a href={href('submit')}><UiText k="footer.submit" /></a>
       <a href={href('tags')}><UiText k="footer.tags" /></a>

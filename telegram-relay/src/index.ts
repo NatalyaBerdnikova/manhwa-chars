@@ -46,10 +46,10 @@ function html(env: Env, status: number, ok: boolean): Response {
   const back = originOf(env.ALLOWED_ORIGIN || '') || '/';
   const title = ok ? 'Заявка отправлена' : 'Не удалось отправить';
   const ru = ok
-    ? 'Заявка отправлена в Telegram. Страница каталога появится только после ручного добавления.'
+    ? 'Заявка отправлена. Страница появится в каталоге после того, как её добавят.'
     : 'Не удалось отправить заявку. Вернитесь к форме и попробуйте ещё раз.';
   const en = ok
-    ? 'The suggestion was sent to Telegram. A catalog page appears only after someone adds it by hand.'
+    ? 'The suggestion was sent. A catalog page appears after it is added.'
     : 'The suggestion could not be sent. Go back to the form and try again.';
   const headers = corsHeaders(env);
   headers.set('Content-Type', 'text/html; charset=utf-8');

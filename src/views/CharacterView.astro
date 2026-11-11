@@ -87,13 +87,13 @@ const altEn = t('en', 'character.portraitAlt', { name: nameEn.text });
 >
   <article>
     <header class="atelier">
-      <div class="atelier-sky" data-parallax="0.04" aria-hidden="true"></div>
+      <div class="atelier-sky" data-parallax="0.22" aria-hidden="true"></div>
       <div class="wrap atelier-top">
         <Breadcrumbs crumbs={crumbs} />
         {fellBack && <p class="fallback" data-i18n="en" role="note">{t('en', 'fallback.notice')}</p>}
       </div>
       <div class="atelier-stage">
-        <div class="atelier-stand" data-parallax="0.14">
+        <div class="atelier-stand" data-parallax="0.48">
           <div class="atelier-figure">
             <CatalogImage
               src={character.data.image}
@@ -185,4 +185,5 @@ const altEn = t('en', 'character.portraitAlt', { name: nameEn.text });
 
 <script>
   import '../scripts/parallax.ts';
+  import '../scripts/hero-snap.ts';
 </script>
