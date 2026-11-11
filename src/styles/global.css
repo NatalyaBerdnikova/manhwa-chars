@@ -1045,6 +1045,45 @@ select {
   color: var(--danger);
 }
 
+.combo {
+  position: relative;
+}
+
+.combo-list {
+  position: absolute;
+  z-index: 8;
+  top: calc(100% + 0.3rem);
+  left: 0;
+  right: 0;
+  max-height: 16rem;
+  margin: 0;
+  padding: 0.35rem;
+  overflow: auto;
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.combo-list button {
+  width: 100%;
+  min-height: 40px;
+  padding: 0.4rem 0.7rem;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.combo-list button[aria-selected="true"],
+.combo-list button:hover {
+  background: var(--chip);
+}
+
 input,
 textarea {
   width: 100%;
@@ -1256,32 +1295,98 @@ textarea[aria-invalid="true"] {
   background: var(--surface);
 }
 
-.catalog-more {
-  margin: 1.1rem 0 0;
+.pager {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 1.35rem 0 0.2rem;
 }
 
-.catalog-more button[hidden] {
+.pager[hidden] {
   display: none;
+}
+
+.pager-pages {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pager-arrow,
+.pager-pages button {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 0.55rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pager-pages button[aria-current="page"] {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.pager-arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pager-gap {
+  min-width: 1.5rem;
+  color: var(--faint);
+  letter-spacing: 0.14em;
+  text-align: center;
+}
+
+.grid[data-catalog-grid] {
+  scroll-margin-top: 4.75rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pager-arrow:not(:disabled):hover,
+  .pager-pages button:not([aria-current="page"]):hover {
+    border-color: var(--line);
+    background: var(--surface);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tile.has-alt:not([data-lazy-alt]):hover .tile-shot-main,
+  .tile.has-alt:not([data-lazy-alt]):focus-within .tile-shot-main,
+  .tile.has-alt.is-alt-ready:hover .tile-shot-main,
+  .tile.has-alt.is-alt-ready:focus-within .tile-shot-main {
+    opacity: 0;
+  }
+
+  .tile.has-alt:not([data-lazy-alt]):hover .tile-shot-alt,
+  .tile.has-alt:not([data-lazy-alt]):focus-within .tile-shot-alt,
+  .tile.has-alt.is-alt-ready:hover .tile-shot-alt,
+  .tile.has-alt.is-alt-ready:focus-within .tile-shot-alt {
+    opacity: 1;
+  }
 }
 
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .tile-shot {
-    transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.35s ease, filter 0.45s ease;
+    transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.4s ease, filter 0.45s ease;
   }
 
   .work-tile:hover .tile-shot,
   .work-tile:focus-within .tile-shot {
     transform: scale(1.05);
-  }
-
-  .tile.has-alt:hover .tile-shot-main,
-  .tile.has-alt:focus-within .tile-shot-main {
-    opacity: 0;
-  }
-
-  .tile.has-alt:hover .tile-shot-alt,
-  .tile.has-alt:focus-within .tile-shot-alt {
-    opacity: 1;
   }
 }
 
@@ -1658,7 +1763,7 @@ textarea[aria-invalid="true"] {
   pointer-events: auto;
   z-index: 2;
   transform: translate3d(calc(-50% - 108%), 0, 0) scale(0.82);
-  filter: blur(3px);
+  filter: blur(1.5px);
 }
 
 .js .cast-slider.is-ready .cast-slide.is-next {
@@ -1666,17 +1771,17 @@ textarea[aria-invalid="true"] {
   pointer-events: auto;
   z-index: 2;
   transform: translate3d(calc(-50% + 108%), 0, 0) scale(0.82);
-  filter: blur(3px);
+  filter: blur(1.5px);
 }
 
 .js .cast-slider.is-ready .cast-slide.is-far-prev {
   transform: translate3d(calc(-50% - 200%), 0, 0) scale(0.7);
-  filter: blur(8px);
+  filter: blur(4px);
 }
 
 .js .cast-slider.is-ready .cast-slide.is-far-next {
   transform: translate3d(calc(-50% + 200%), 0, 0) scale(0.7);
-  filter: blur(8px);
+  filter: blur(4px);
 }
 
 .js .cast-slider.is-ready.is-flying .cast-slide,

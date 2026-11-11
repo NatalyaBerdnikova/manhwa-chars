@@ -136,7 +136,7 @@ const social = work.data.cover ? await socialImage(work.data.cover) : null;
             <ul class="grid">
               {cast.map((character) => (
                 <li>
-                  <CharacterCard character={character} work={work} level="h3" detail="tags" />
+                  <CharacterCard character={character} work={work} level="h3" detail="tags" lazyAlt />
                 </li>
               ))}
             </ul>
@@ -149,4 +149,5 @@ const social = work.data.cover ? await socialImage(work.data.cover) : null;
 
 <script>
   import '../scripts/parallax.ts';
+  import '../scripts/card-hover.ts';
 </script>

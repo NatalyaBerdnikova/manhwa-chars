@@ -13,9 +13,11 @@ interface Props {
   priority?: boolean;
   /** Work title reads like a price line. On a work page, tags read like a material line. */
   detail?: 'work' | 'tags';
+  /** Load the alternate pose when the card nears the screen, then crossfade on hover. */
+  lazyAlt?: boolean;
 }
 
-const { character, work, level = 'h2', priority = false, detail = 'work' } = Astro.props;
+const { character, work, level = 'h2', priority = false, detail = 'work', lazyAlt = false } = Astro.props;
 const name = pick(character.data.name, 'ru');
 const nameEn = pick(character.data.name, 'en');
 const workTitle = pick(work.data.title, 'ru');
@@ -31,7 +33,7 @@ const page = href(`characters/${character.id}`);
 const Heading = level;
 ---
 
-<article class:list={['tile', hover && 'has-alt']}>
+<article class:list={['tile', hover && 'has-alt']} data-lazy-alt={lazyAlt && hover ? 'true' : undefined}>
   <a class="tile-link" href={page}>
     <div class="tile-stage">
       <div class="tile-shot tile-shot-main">
@@ -49,6 +51,7 @@ const Heading = level;
               src={hover}
               alt=""
               sizes="(min-width: 1100px) 240px, (min-width: 700px) 30vw, 46vw"
+              defer={lazyAlt}
             />
           </div>
         )
